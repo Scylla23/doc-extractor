@@ -44,7 +44,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T22 Wire UI to `/extract` + render JSON
 - [x] T23 Deploy API to Railway
 - [x] T24 Deploy UI to Vercel
-- [ ] T25 Storefront README (hero demo, badges, accuracy table, quickstart)
+- [x] T25 Storefront README (hero demo, badges, accuracy table, quickstart)
 
 ---
 
