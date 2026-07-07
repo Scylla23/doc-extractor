@@ -1,8 +1,10 @@
 """End-to-end thread: PDF bytes -> Claude -> validated Invoice.
 
-Native-PDF only (no OCR, no routing yet — those are T6/T11/T12). Sends the whole
-PDF as a base64 `document` block plus the JSON Schema, and validates the model's
-JSON reply against the `Invoice` schema.
+Fast path (T6): pull the native text layer with PyMuPDF and send that Markdown/
+text (PRD §4 Finding 1) — ~10-20x cheaper than page images. When a PDF has no
+usable text layer (scanned/image-only) we fall back to sending the whole PDF as
+a base64 `document` block. The native-vs-scanned router and OCR are T11/T12.
+Either way the model's JSON reply is validated against the `Invoice` schema.
 
 Why not Structured Outputs? Claude's constrained-decoding grammar compiler times
 out on our confidence-wrapper-per-field schema (a `Field` object repeated across
@@ -21,6 +23,7 @@ import sys
 import anthropic
 from dotenv import load_dotenv
 
+from app import parse
 from app.schema import Invoice
 
 load_dotenv()  # so `python -m app.extract` picks up ANTHROPIC_API_KEY from .env
@@ -28,6 +31,10 @@ load_dotenv()  # so `python -m app.extract` picks up ANTHROPIC_API_KEY from .env
 # ponytail: Haiku 4.5 is the MVP default per the model cascade; Sonnet/Opus
 # escalation on low confidence is T15, not now.
 MODEL = "claude-haiku-4-5"
+
+# ponytail: char-count heuristic for "has a usable text layer"; below this we
+# fall back to the PDF document block. The real native-vs-scanned router is T11.
+_MIN_TEXT_CHARS = 100
 
 
 def _prompt() -> str:
@@ -55,27 +62,30 @@ def _strip_fences(text: str) -> str:
 
 def extract_invoice(pdf_bytes: bytes) -> Invoice:
     client = anthropic.Anthropic()
-    b64 = base64.standard_b64encode(pdf_bytes).decode("utf-8")
+    text = parse.extract_text(pdf_bytes)
+
+    if len(text.strip()) >= _MIN_TEXT_CHARS:
+        # Fast path: native text layer — cheap, no page images (PRD §4 Finding 1).
+        content = [{"type": "text", "text": f"{_prompt()}\n\nINVOICE TEXT:\n{text}"}]
+    else:
+        # Fallback: scanned/image-only PDF — send the whole doc for vision.
+        b64 = base64.standard_b64encode(pdf_bytes).decode("utf-8")
+        content = [
+            {
+                "type": "document",
+                "source": {
+                    "type": "base64",
+                    "media_type": "application/pdf",
+                    "data": b64,
+                },
+            },
+            {"type": "text", "text": _prompt()},
+        ]
 
     response = client.messages.create(
         model=MODEL,
         max_tokens=8192,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "document",
-                        "source": {
-                            "type": "base64",
-                            "media_type": "application/pdf",
-                            "data": b64,
-                        },
-                    },
-                    {"type": "text", "text": _prompt()},
-                ],
-            }
-        ],
+        messages=[{"role": "user", "content": content}],
     )
 
     if response.stop_reason == "max_tokens":
