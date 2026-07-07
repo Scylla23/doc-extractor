@@ -170,9 +170,20 @@ body[data-state="loading"] .dropzone { cursor: default; }
   border-radius: 0 6px 6px 0;
 }
 
-/* ---- Result ledger (populated in T22) ---- */
+/* ---- Result ledger ---- */
 .result { margin-top: 2rem; }
 .result:empty { display: none; }
+
+.result-group {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 1.75rem 0 0.25rem;
+}
+.result-group:first-child { margin-top: 0; }
 
 .field-row {
   display: grid;
@@ -218,6 +229,29 @@ body[data-state="loading"] .dropzone { cursor: default; }
   color: var(--ink-soft);
   border-left: 2px solid var(--accent-tint);
   padding-left: 0.6rem;
+}
+
+.raw-json {
+  margin-top: 1.5rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+}
+.raw-json summary {
+  cursor: pointer;
+  color: var(--ink-soft);
+  letter-spacing: 0.04em;
+}
+.raw-json summary:hover { color: var(--accent); }
+.raw-json pre {
+  margin: 0.75rem 0 0;
+  padding: 1rem;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow-x: auto;
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--ink);
 }
 
 /* ---- Footer ---- */

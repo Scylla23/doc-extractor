@@ -39,14 +39,143 @@ function handleFile(file) {
   extractFile(file);
 }
 
+const POLL_MS = 1750;
+const TIMEOUT_MS = 120000; // scanned docs + model cascade can run 60s+ (see PRD §4)
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
 async function extractFile(file) {
-  // ponytail: T22 wires the real fetch here — POST /extract, then poll
-  // GET /jobs/{id} to "done"/"error", then renderResult(invoice). For the T21
-  // shell we just hold the loading state so the upload flow is visible/testable.
+  const api = window.API_BASE;
+  try {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`${api}/extract`, { method: "POST", body: form });
+    if (!res.ok) {
+      const detail = await res.json().catch(() => ({}));
+      throw new Error(detail.detail || `Upload failed (HTTP ${res.status}).`);
+    }
+    const { job_id } = await res.json();
+
+    const deadline = Date.now() + TIMEOUT_MS;
+    while (Date.now() < deadline) {
+      await sleep(POLL_MS);
+      const jr = await fetch(`${api}/jobs/${job_id}`);
+      if (!jr.ok) throw new Error(`Lost the job (HTTP ${jr.status}).`);
+      const job = await jr.json();
+      if (job.status === "done") {
+        renderResult(job.result);
+        setState("idle"); // dropzone ready for another; result shows below
+        return;
+      }
+      if (job.status === "error") {
+        throw new Error(job.error || "Extraction failed.");
+      }
+    }
+    throw new Error("Extraction timed out. Try a smaller or clearer PDF.");
+  } catch (err) {
+    const msg = /fetch/i.test(err.message || "")
+      ? "Couldn't reach the API. Is it running?"
+      : err.message || "Something went wrong.";
+    showError(msg);
+  }
 }
 
-// renderResult(invoice) — the cited-field ledger. Built in T22 against the live
-// Invoice shape; the .field-row / .field-meter / .field-cite styles are ready.
+// --- Result ledger: every field with its confidence + source citation ---
+
+const money = (f) =>
+  f && typeof f.value === "number" ? f.value.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }) : val(f);
+
+const val = (f) => (f && f.value != null && f.value !== "" ? String(f.value) : "—");
+
+function fieldRow(label, field, valueText) {
+  const row = document.createElement("div");
+  row.className = "field-row";
+  const has = field && field.value != null && field.value !== "";
+  row.dataset.review = String(Boolean(field && field.review_required));
+
+  const l = document.createElement("span");
+  l.className = "field-label";
+  l.textContent = label;
+
+  const v = document.createElement("span");
+  v.className = "field-value";
+  v.textContent = valueText != null ? valueText : val(field);
+
+  row.append(l, v);
+
+  if (has) {
+    const m = document.createElement("span");
+    m.className = "field-meter";
+    const pct = Math.round(((field.confidence ?? 0) * 100));
+    m.style.setProperty("--pct", `${pct}%`);
+    m.title = `confidence ${pct}%${field.review_required ? " · review" : ""}`;
+    row.append(m);
+  }
+
+  if (field && field.source_quote) {
+    const c = document.createElement("span");
+    c.className = "field-cite";
+    c.textContent = `“${field.source_quote}”${field.page != null ? ` ·p${field.page}` : ""}`;
+    row.append(c);
+  }
+  return row;
+}
+
+function group(title, rows) {
+  const frag = document.createDocumentFragment();
+  const h = document.createElement("h2");
+  h.className = "result-group";
+  h.textContent = title;
+  frag.append(h, ...rows);
+  return frag;
+}
+
+function renderResult(inv) {
+  resultEl.innerHTML = "";
+  inv = inv || {};
+
+  resultEl.append(
+    group("Invoice", [
+      fieldRow("Vendor", inv.vendor_name),
+      fieldRow("Invoice №", inv.invoice_number),
+      fieldRow("Date", inv.invoice_date),
+      fieldRow("Currency", inv.currency),
+    ])
+  );
+
+  const items = inv.line_items || [];
+  if (items.length) {
+    const rows = items.map((it, i) => {
+      const desc = val(it.description);
+      const qty = it.quantity && it.quantity.value != null ? `${val(it.quantity)} × ` : "";
+      const unit = it.unit_price && it.unit_price.value != null ? ` @ ${money(it.unit_price)}` : "";
+      // The row's value reads as a line; the meter/cite track the amount field.
+      return fieldRow(`Item ${i + 1}`, it.amount, `${qty}${desc}${unit} = ${money(it.amount)}`);
+    });
+    resultEl.append(group(`Line items (${items.length})`, rows));
+  }
+
+  resultEl.append(
+    group("Totals", [
+      fieldRow("Subtotal", inv.subtotal, money(inv.subtotal)),
+      fieldRow("Tax", inv.tax, money(inv.tax)),
+      fieldRow("Total", inv.total, money(inv.total)),
+    ])
+  );
+
+  // Proof it's real schema-valid JSON, for the dev audience.
+  const details = document.createElement("details");
+  details.className = "raw-json";
+  const summary = document.createElement("summary");
+  summary.textContent = "Raw JSON";
+  const pre = document.createElement("pre");
+  pre.textContent = JSON.stringify(inv, null, 2);
+  details.append(summary, pre);
+  resultEl.append(details);
+}
 
 // --- wiring ---
 fileInput.addEventListener("change", () => handleFile(fileInput.files[0]));

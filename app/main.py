@@ -7,10 +7,12 @@ the Invoice result. Per-job logging is T10.
 
 from __future__ import annotations
 
+import os
 import uuid
 from typing import Literal, Optional
 
 from fastapi import BackgroundTasks, FastAPI, File, HTTPException, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from app.extract import extract_invoice
@@ -21,6 +23,19 @@ from app.schema import Invoice
 MAX_BYTES = 32 * 1024 * 1024
 
 app = FastAPI(title="doc-extractor", description="Invoice PDF -> structured JSON")
+
+# Browser-origin allowlist: the UI is served from a different origin (localhost
+# in dev, Vercel in prod), so cross-origin calls need CORS. Origins come from the
+# ALLOWED_ORIGINS env var (comma-separated); T23 sets the Vercel origin in prod.
+_origins = os.environ.get(
+    "ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173"
+)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in _origins.split(",") if o.strip()],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ponytail: in-memory job dict; swap for Supabase in backlog when multi-instance.
 _jobs: dict[str, "Job"] = {}
