@@ -25,8 +25,8 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T3 Walking skeleton: PDF → Claude Structured Outputs → validated JSON
 - [x] T4 Sample invoice + M0 README & screenshots
 - [ ] T5 FastAPI `POST /extract` wrapping the extractor
-- [ ] T6 PyMuPDF native-text fast path
-- [ ] T7 Business-rule validation layer
+- [x] T6 PyMuPDF native-text fast path
+- [x] T7 Business-rule validation layer
 - [ ] T8 Instructor self-heal retries on schema failure
 - [ ] T9 Async job (BackgroundTasks) + `job_id` + `GET /jobs/{id}`
 - [ ] T10 Per-job logging (prompt, model id, raw output)
