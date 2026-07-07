@@ -33,7 +33,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T11 Doc router: native vs scanned classifier
 - [x] T12 Mistral OCR fallback → Markdown
 - [x] T13 Feed Markdown + page image to Claude
-- [ ] T14 Multi-signal confidence engine (per field)
+- [x] T14 Multi-signal confidence engine (per field)
 - [ ] T15 Model cascade escalation on low confidence
 - [ ] T16 Prompt caching on schema/instructions prefix
 - [ ] T17 Labeled eval set (~50–100 invoices + ground-truth JSON)
