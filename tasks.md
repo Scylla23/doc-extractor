@@ -36,7 +36,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T14 Multi-signal confidence engine (per field)
 - [x] T15 Model cascade escalation on low confidence
 - [x] T16 Prompt caching on schema/instructions prefix
-- [ ] T17 Labeled eval set (~50–100 invoices + ground-truth JSON)
+- [x] T17 Labeled eval set (~50–100 invoices + ground-truth JSON)
 - [ ] T18 Field-level scorer with normalization
 - [ ] T19 Accuracy report (precision/recall/F1 per field + STP)
 - [ ] T20 Golden-set CI regression test
