@@ -4,23 +4,21 @@ Fast path (T6): pull the native text layer with PyMuPDF and send that Markdown/
 text (PRD §4 Finding 1) — ~10-20x cheaper than page images. When a PDF has no
 usable text layer (scanned/image-only) we fall back to sending the whole PDF as
 a base64 `document` block. The native-vs-scanned router and OCR are T11/T12.
-Either way the model's JSON reply is validated against the `Invoice` schema.
 
-Why not Structured Outputs? Claude's constrained-decoding grammar compiler times
-out on our confidence-wrapper-per-field schema (a `Field` object repeated across
-every field and every line item — "grammar compilation timed out", verified on
-Haiku even after slimming every leaf). So we prompt for plain JSON and validate
-with Pydantic. Self-heal retries on a malformed reply are Instructor's job (T8).
+We don't use Claude's constrained-decoding structured output — its grammar
+compiler times out on our confidence-wrapper-per-field schema. Instead we prompt
+for plain JSON and let Instructor (T8) validate against `Invoice` and self-heal:
+on a Pydantic/structural failure it re-prompts the model with the validation
+error, bounded to MAX_RETRIES, rather than crashing.
 """
 
 from __future__ import annotations
 
 import base64
-import json
-import re
 import sys
 
 import anthropic
+import instructor
 from dotenv import load_dotenv
 
 from app import parse
@@ -36,14 +34,17 @@ MODEL = "claude-haiku-4-5"
 # fall back to the PDF document block. The real native-vs-scanned router is T11.
 _MIN_TEXT_CHARS = 100
 
+# Instructor self-heal cap (§9): re-prompt with the validation error at most this
+# many times before raising cleanly. Bounded — no loops.
+MAX_RETRIES = 2
+
 
 def _prompt() -> str:
-    schema = json.dumps(Invoice.model_json_schema())
+    # Instructor injects the JSON schema itself (response_model=Invoice), so we
+    # only give field-fill guidance here — embedding the schema too would double
+    # it in the prompt and undo T6's token savings.
     return (
-        "Extract this invoice into a JSON object matching exactly this schema:\n"
-        f"{schema}\n\n"
-        "Rules:\n"
-        "- Return ONLY the JSON object — no prose, no markdown code fences.\n"
+        "Extract this invoice as a JSON object.\n"
         "- For each field set: value (or null if absent from the document — never "
         "guess), source_quote (the verbatim text you took it from), page (1-indexed), "
         "and confidence (your 0-1 certainty).\n"
@@ -51,17 +52,10 @@ def _prompt() -> str:
     )
 
 
-def _strip_fences(text: str) -> str:
-    """Tolerate a ```json ... ``` wrapper if the model adds one anyway."""
-    text = text.strip()
-    if text.startswith("```"):
-        text = re.sub(r"^```[a-zA-Z]*\n?", "", text)
-        text = re.sub(r"\n?```$", "", text).strip()
-    return text
-
-
-def extract_invoice(pdf_bytes: bytes) -> Invoice:
-    client = anthropic.Anthropic()
+def extract_invoice(
+    pdf_bytes: bytes, *, client: anthropic.Anthropic | None = None
+) -> Invoice:
+    """PDF bytes -> validated Invoice. `client` is injectable for tests."""
     text = parse.extract_text(pdf_bytes)
 
     if len(text.strip()) >= _MIN_TEXT_CHARS:
@@ -82,26 +76,34 @@ def extract_invoice(pdf_bytes: bytes) -> Invoice:
             {"type": "text", "text": _prompt()},
         ]
 
-    response = client.messages.create(
+    # Instructor validates the reply against `Invoice` and, on a structural
+    # failure, re-prompts with the error (bounded by MAX_RETRIES). JSON mode, not
+    # tool/structured-output mode — the grammar compiler times out on our schema.
+    inst = instructor.from_anthropic(
+        client or anthropic.Anthropic(), mode=instructor.Mode.ANTHROPIC_JSON
+    )
+    invoice, completion = inst.messages.create_with_completion(
         model=MODEL,
         max_tokens=8192,
+        max_retries=MAX_RETRIES,
+        response_model=Invoice,
         messages=[{"role": "user", "content": content}],
     )
 
-    if response.stop_reason == "max_tokens":
+    if completion.stop_reason == "max_tokens":
         raise RuntimeError(
             "Extraction hit max_tokens — JSON was truncated; raise max_tokens."
         )
 
-    text = next(b.text for b in response.content if b.type == "text")
-
-    # Log token usage (feeds the T6 fast-path comparison and reproducibility).
+    # Log token usage + retry cap (feeds the fast-path comparison and
+    # reproducibility; structured per-job logging is T10).
     print(
-        f"[extract] model={response.model} input_tokens={response.usage.input_tokens} "
-        f"output_tokens={response.usage.output_tokens}",
+        f"[extract] model={completion.model} "
+        f"input_tokens={completion.usage.input_tokens} "
+        f"output_tokens={completion.usage.output_tokens} max_retries={MAX_RETRIES}",
         file=sys.stderr,
     )
-    return Invoice.model_validate_json(_strip_fences(text))
+    return invoice
 
 
 if __name__ == "__main__":
