@@ -38,7 +38,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T16 Prompt caching on schema/instructions prefix
 - [x] T17 Labeled eval set (~50–100 invoices + ground-truth JSON)
 - [x] T18 Field-level scorer with normalization
-- [ ] T19 Accuracy report (precision/recall/F1 per field + STP)
+- [x] T19 Accuracy report (precision/recall/F1 per field + STP)
 - [ ] T20 Golden-set CI regression test
 - [ ] T21 Minimal drag-drop web UI
 - [ ] T22 Wire UI to `/extract` + render JSON
