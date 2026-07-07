@@ -1,9 +1,10 @@
 """End-to-end thread: PDF bytes -> Claude -> validated Invoice.
 
-Fast path (T6): pull the native text layer with PyMuPDF and send that Markdown/
-text (PRD §4 Finding 1) — ~10-20x cheaper than page images. When a PDF has no
-usable text layer (scanned/image-only) we fall back to sending the whole PDF as
-a base64 `document` block. The native-vs-scanned router and OCR are T11/T12.
+The router (T11) classifies each PDF. Native text layer → fast path: pull the
+text with PyMuPDF and send it (PRD §4 Finding 1) — ~10-20x cheaper than page
+images. Scanned/image-only → OCR path (T12/T13): OCR to Markdown via Mistral and
+send that Markdown **plus** the page image(s) to Claude — the hybrid
+parse-then-LLM pattern, giving the model reliable tokens and the original layout.
 
 We don't use Claude's constrained-decoding structured output — its grammar
 compiler times out on our confidence-wrapper-per-field schema. Instead we prompt
@@ -23,7 +24,7 @@ import anthropic
 import instructor
 from dotenv import load_dotenv
 
-from app import parse
+from app import parse, route
 from app.schema import Invoice
 
 load_dotenv()  # so `python -m app.extract` picks up ANTHROPIC_API_KEY from .env
@@ -31,10 +32,6 @@ load_dotenv()  # so `python -m app.extract` picks up ANTHROPIC_API_KEY from .env
 # ponytail: Haiku 4.5 is the MVP default per the model cascade; Sonnet/Opus
 # escalation on low confidence is T15, not now.
 MODEL = "claude-haiku-4-5"
-
-# ponytail: char-count heuristic for "has a usable text layer"; below this we
-# fall back to the PDF document block. The real native-vs-scanned router is T11.
-_MIN_TEXT_CHARS = 100
 
 # Instructor self-heal cap (§9): re-prompt with the validation error at most this
 # many times before raising cleanly. Bounded — no loops.
@@ -77,6 +74,36 @@ def _log_job(job_id: str, prompt: str, completion: anthropic.types.Message) -> N
         f.write(json.dumps(record) + "\n")
 
 
+def _build_content(pdf_bytes: bytes) -> list[dict]:
+    """Route the PDF and build the user-message content blocks.
+
+    Native → one text block (PyMuPDF text). Scanned → the OCR-hybrid: one text
+    block (Mistral Markdown) plus one image block per page (PRD §4 Finding 1).
+    """
+    if route.classify(pdf_bytes).route == route.NATIVE:
+        # Fast path: native text layer — cheap, no page images.
+        text = parse.extract_text(pdf_bytes)
+        return [{"type": "text", "text": f"{_prompt()}\n\nINVOICE TEXT:\n{text}"}]
+
+    # OCR hybrid: Markdown for reliable tokens + the page image(s) for layout.
+    ocr = parse.ocr(pdf_bytes)
+    content: list[dict] = [
+        {"type": "text", "text": f"{_prompt()}\n\nINVOICE MARKDOWN (OCR):\n{ocr.markdown}"}
+    ]
+    for image in ocr.page_images:
+        content.append(
+            {
+                "type": "image",
+                "source": {
+                    "type": "base64",
+                    "media_type": "image/png",
+                    "data": base64.standard_b64encode(image).decode("ascii"),
+                },
+            }
+        )
+    return content
+
+
 def extract_invoice(
     pdf_bytes: bytes,
     *,
@@ -85,25 +112,7 @@ def extract_invoice(
 ) -> Invoice:
     """PDF bytes -> validated Invoice. `client` is injectable for tests; when
     `job_id` is given, a per-job reproducibility record is logged (T10)."""
-    text = parse.extract_text(pdf_bytes)
-
-    if len(text.strip()) >= _MIN_TEXT_CHARS:
-        # Fast path: native text layer — cheap, no page images (PRD §4 Finding 1).
-        content = [{"type": "text", "text": f"{_prompt()}\n\nINVOICE TEXT:\n{text}"}]
-    else:
-        # Fallback: scanned/image-only PDF — send the whole doc for vision.
-        b64 = base64.standard_b64encode(pdf_bytes).decode("utf-8")
-        content = [
-            {
-                "type": "document",
-                "source": {
-                    "type": "base64",
-                    "media_type": "application/pdf",
-                    "data": b64,
-                },
-            },
-            {"type": "text", "text": _prompt()},
-        ]
+    content = _build_content(pdf_bytes)
 
     # Instructor validates the reply against `Invoice` and, on a structural
     # failure, re-prompts with the error (bounded by MAX_RETRIES). JSON mode, not
@@ -137,9 +146,37 @@ def extract_invoice(
     return invoice
 
 
+def demo() -> None:
+    """Offline self-check of block assembly — no API calls.
+
+    Native sample routes to a single text block; the scanned sample routes to a
+    text block **and** an image block (T13 hybrid). `parse.ocr` is stubbed so we
+    don't spend a Mistral call just to assert the block shape.
+    """
+    samples = Path(__file__).resolve().parent.parent / "samples"
+
+    native = _build_content((samples / "sample1.pdf").read_bytes())
+    assert [b["type"] for b in native] == ["text"], native
+
+    orig_ocr = parse.ocr
+    parse.ocr = lambda _b: parse.OcrResult(markdown="# stub", page_images=[b"\x89PNGstub"])
+    try:
+        scanned = _build_content((samples / "scanned1.pdf").read_bytes())
+    finally:
+        parse.ocr = orig_ocr
+    types = [b["type"] for b in scanned]
+    assert "text" in types and "image" in types, types  # both blocks present
+
+    print("extract demo OK")
+
+
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit("usage: python -m app.extract <invoice.pdf>")
-    with open(sys.argv[1], "rb") as f:
+    args = sys.argv[1:]
+    if not args:
+        demo()
+        sys.exit(0)
+    if len(args) != 1:
+        sys.exit("usage: python -m app.extract [<invoice.pdf>]")
+    with open(args[0], "rb") as f:
         invoice = extract_invoice(f.read())
     print(invoice.model_dump_json(indent=2))
