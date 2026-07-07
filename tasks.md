@@ -29,7 +29,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T7 Business-rule validation layer
 - [x] T8 Instructor self-heal retries on schema failure
 - [x] T9 Async job (BackgroundTasks) + `job_id` + `GET /jobs/{id}`
-- [ ] T10 Per-job logging (prompt, model id, raw output)
+- [x] T10 Per-job logging (prompt, model id, raw output)
 - [ ] T11 Doc router: native vs scanned classifier
 - [ ] T12 Mistral OCR fallback → Markdown
 - [ ] T13 Feed Markdown + page image to Claude
