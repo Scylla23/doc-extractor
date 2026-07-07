@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -40,8 +41,10 @@ _CRITICAL_FIELDS = ("vendor_name", "invoice_number", "total")
 
 # Self-consistency samples for the confidence engine (T14, PRD §4 Finding 3):
 # extract N times and score field agreement. ponytail: N model calls per doc,
-# bounded (no loop growth); set to 1 to disable self-consistency if cost bites.
-_N_SAMPLES = 3
+# bounded (no loop growth). Env-overridable so the public demo can run at N=1
+# (~3x cheaper/snappier; accuracy is unaffected — N is a confidence signal, not
+# an accuracy lever); default stays 3 for local/eval.
+_N_SAMPLES = int(os.environ.get("N_SAMPLES", "3"))
 
 # Instructor self-heal cap (§9): re-prompt with the validation error at most this
 # many times before raising cleanly. Bounded — no loops.
