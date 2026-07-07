@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>doc-extractor — invoices in, cited JSON out</title>
+  <meta name="description" content="Drop an invoice PDF, get clean validated JSON back — with a confidence score and a source citation for every field." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body data-state="idle">
+  <div class="sheet">
+    <header class="masthead">
+      <div class="wordmark">
+        <span class="stamp" aria-hidden="true">✓</span>
+        <span class="wordmark-text">doc-extractor</span>
+      </div>
+      <p class="pitch">Messy invoice in. Clean, <em>cited</em> JSON out.</p>
+      <p class="subpitch">Every field comes back with a confidence score and the verbatim line it was read from — so you can auto-approve the easy 80% and flag the rest.</p>
+    </header>
+
+    <main>
+      <!-- Hero: the drop zone is the product. -->
+      <label class="dropzone" id="dropzone">
+        <input type="file" id="fileInput" accept="application/pdf,.pdf" hidden />
+
+        <!-- idle -->
+        <span class="dz-idle">
+          <svg class="doc-icon" viewBox="0 0 48 60" width="52" height="65" aria-hidden="true">
+            <rect x="1.5" y="1.5" width="45" height="57" rx="3" />
+            <line x1="10" y1="16" x2="38" y2="16" />
+            <line x1="10" y1="24" x2="38" y2="24" />
+            <line x1="10" y1="32" x2="30" y2="32" />
+            <line x1="10" y1="44" x2="24" y2="44" />
+          </svg>
+          <span class="dz-head">Drop an invoice PDF</span>
+          <span class="dz-sub">or <u>click to choose a file</u></span>
+          <span class="dz-hint">Born-digital or scanned · up to 32&nbsp;MB</span>
+        </span>
+
+        <!-- loading: document under the scanner -->
+        <span class="dz-loading" aria-live="polite">
+          <span class="scanner" aria-hidden="true">
+            <svg class="doc-icon" viewBox="0 0 48 60" width="52" height="65">
+              <rect x="1.5" y="1.5" width="45" height="57" rx="3" />
+              <line x1="10" y1="16" x2="38" y2="16" />
+              <line x1="10" y1="24" x2="38" y2="24" />
+              <line x1="10" y1="32" x2="30" y2="32" />
+              <line x1="10" y1="44" x2="24" y2="44" />
+            </svg>
+            <span class="scanline"></span>
+          </span>
+          <span class="dz-head">Extracting…</span>
+          <span class="dz-file" id="loadingFile"></span>
+          <span class="dz-hint">Routing → parsing → reading with Claude → validating. Scanned docs can take up to a minute.</span>
+        </span>
+      </label>
+
+      <p class="error" id="error" role="alert" hidden></p>
+
+      <!-- Result panel: T22 injects the ledger of cited fields here. -->
+      <section class="result" id="result" aria-live="polite"></section>
+    </main>
+
+    <footer class="colophon">
+      <span>Hybrid parse-then-LLM routing · Claude structured output · multi-signal confidence</span>
+      <span class="stack">PyMuPDF · Mistral OCR · Claude · FastAPI</span>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

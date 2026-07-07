@@ -1,0 +1,240 @@
+/* doc-extractor UI — "the audit desk".
+   Cool paper, fountain-pen indigo ink, monospace figures. The signature element
+   is the per-field ledger line (label · mono value · confidence meter · citation),
+   built in .field-row below and populated by app.js in T22. */
+
+:root {
+  --paper: #F3F4F1;
+  --panel: #FFFFFF;
+  --ink: #15171A;
+  --ink-soft: #565B60;
+  --rule: #E2E4DF;
+  --accent: #2B2E6B;          /* fountain-pen indigo: brand, focus, the stamp */
+  --accent-tint: #EDEDF4;
+  --ok: #2F7A4F;              /* confidence: high */
+  --warn: #B0680C;           /* confidence: review_required */
+  --ui: "Space Grotesk", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ui);
+  line-height: 1.5;
+  /* faint ledger ruling, so the page reads as accounting paper */
+  background-image: linear-gradient(var(--rule) 1px, transparent 1px);
+  background-size: 100% 2.25rem;
+  background-position: 0 -1px;
+}
+
+.sheet {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3.5rem 1.5rem 2.5rem;
+}
+
+/* ---- Masthead ---- */
+.masthead { margin-bottom: 2.5rem; }
+
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.75rem;
+}
+.stamp {
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  border: 2px solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  transform: rotate(-8deg);
+}
+.wordmark-text {
+  font-family: var(--mono);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: 1rem;
+}
+
+.pitch {
+  font-size: clamp(1.9rem, 6vw, 2.9rem);
+  font-weight: 500;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.9rem;
+}
+.pitch em {
+  font-style: normal;
+  color: var(--accent);
+  border-bottom: 3px solid var(--accent);
+}
+.subpitch {
+  max-width: 46ch;
+  color: var(--ink-soft);
+  font-size: 1.02rem;
+  margin: 0;
+}
+
+/* ---- Drop zone (the hero) ---- */
+.dropzone {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  min-height: 260px;
+  padding: 2.5rem 1.5rem;
+  background: var(--panel);
+  border: 1.5px dashed #C4C7D6;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
+}
+.dropzone:hover,
+.dropzone:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-tint);
+}
+.dropzone.dragging {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent-tint);
+}
+
+.doc-icon { fill: none; stroke: var(--ink-soft); stroke-width: 2; }
+.dropzone:hover .doc-icon,
+.dropzone.dragging .doc-icon { stroke: var(--accent); }
+
+.dz-head { display: block; font-size: 1.15rem; font-weight: 500; margin-top: 1rem; }
+.dz-sub { display: block; color: var(--ink-soft); margin-top: 0.15rem; }
+.dz-sub u { text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.dz-hint {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  margin-top: 0.85rem;
+}
+.dz-file {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  color: var(--accent);
+  margin-top: 0.35rem;
+  word-break: break-all;
+}
+
+/* State switch: show the panel matching body[data-state]. */
+.dz-loading { display: none; }
+body[data-state="loading"] .dz-idle { display: none; }
+body[data-state="loading"] .dz-loading { display: block; }
+body[data-state="loading"] .dropzone { cursor: default; }
+
+/* ---- Scanner animation (the aesthetic risk) ---- */
+.scanner { position: relative; display: inline-block; }
+.scanline {
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  top: 0;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 8px 1px rgba(43, 46, 107, 0.5);
+  opacity: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scanline { animation: sweep 1.6s ease-in-out infinite; }
+}
+@keyframes sweep {
+  0%   { top: 4%;  opacity: 0; }
+  15%  { opacity: 1; }
+  85%  { opacity: 1; }
+  100% { top: 96%; opacity: 0; }
+}
+
+/* ---- Inline error ---- */
+.error {
+  margin: 1rem 0 0;
+  padding: 0.7rem 0.9rem;
+  border-left: 3px solid var(--warn);
+  background: #FBF3E7;
+  color: #6b4405;
+  font-size: 0.92rem;
+  border-radius: 0 6px 6px 0;
+}
+
+/* ---- Result ledger (populated in T22) ---- */
+.result { margin-top: 2rem; }
+.result:empty { display: none; }
+
+.field-row {
+  display: grid;
+  grid-template-columns: 12ch 1fr auto;
+  align-items: baseline;
+  gap: 0.75rem 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.field-label {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.field-value { font-family: var(--mono); font-size: 0.98rem; }
+.field-meter {
+  --pct: 0%;
+  position: relative;
+  width: 92px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--rule);
+  align-self: center;
+}
+.field-meter::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: var(--pct);
+  border-radius: 3px;
+  background: var(--ok);
+}
+.field-row[data-review="true"] .field-meter::after { background: var(--warn); }
+.field-row[data-review="true"] .field-label::before {
+  content: "✎ ";
+  color: var(--warn);
+}
+.field-cite {
+  grid-column: 2 / -1;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  border-left: 2px solid var(--accent-tint);
+  padding-left: 0.6rem;
+}
+
+/* ---- Footer ---- */
+.colophon {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.74rem;
+  color: var(--ink-soft);
+}
+
+@media (max-width: 440px) {
+  .field-row { grid-template-columns: 1fr auto; }
+  .field-label { grid-column: 1 / -1; }
+}

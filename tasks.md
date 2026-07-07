@@ -40,7 +40,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T18 Field-level scorer with normalization
 - [x] T19 Accuracy report (precision/recall/F1 per field + STP)
 - [x] T20 Golden-set CI regression test
-- [ ] T21 Minimal drag-drop web UI
+- [x] T21 Minimal drag-drop web UI
 - [ ] T22 Wire UI to `/extract` + render JSON
 - [ ] T23 Deploy API to Railway
 - [ ] T24 Deploy UI to Vercel
