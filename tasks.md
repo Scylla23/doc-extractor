@@ -31,7 +31,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T9 Async job (BackgroundTasks) + `job_id` + `GET /jobs/{id}`
 - [x] T10 Per-job logging (prompt, model id, raw output)
 - [x] T11 Doc router: native vs scanned classifier
-- [ ] T12 Mistral OCR fallback → Markdown
+- [x] T12 Mistral OCR fallback → Markdown
 - [ ] T13 Feed Markdown + page image to Claude
 - [ ] T14 Multi-signal confidence engine (per field)
 - [ ] T15 Model cascade escalation on low confidence
