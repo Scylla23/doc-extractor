@@ -24,7 +24,7 @@ import anthropic
 import instructor
 from dotenv import load_dotenv
 
-from app import confidence, parse, route
+from app import confidence, fewshot, parse, route
 from app.schema import Invoice
 
 load_dotenv()  # so `python -m app.extract` picks up ANTHROPIC_API_KEY from .env
@@ -52,17 +52,23 @@ MAX_RETRIES = 2
 JOB_LOG_PATH = Path("logs/jobs.jsonl")
 
 
-def _prompt() -> str:
-    # Instructor injects the JSON schema itself (response_model=Invoice), so we
-    # only give field-fill guidance here — embedding the schema too would double
-    # it in the prompt and undo T6's token savings.
-    return (
-        "Extract this invoice as a JSON object.\n"
-        "- For each field set: value (or null if absent from the document — never "
-        "guess), source_quote (the verbatim text you took it from), page (1-indexed), "
-        "and confidence (your 0-1 certainty).\n"
-        "- Include one entry in line_items per line item on the invoice."
-    )
+def _system() -> list[dict]:
+    """The stable, cacheable prefix: extraction instructions + few-shot examples
+    (T16, PRD §8). One `cache_control` breakpoint so the first call writes it and
+    later calls (other samples, the next doc) read it at ~0.1x. Per-doc content
+    stays in the user message, after this breakpoint. Instructor appends the JSON
+    schema as a further (uncached) system block after this one.
+
+    ponytail: prefix is ~4.9k tokens — over the 4096 min-cacheable floor on Haiku
+    4.5 / Opus 4.8 (below it, ephemeral caching silently no-ops).
+    """
+    return [
+        {
+            "type": "text",
+            "text": fewshot.SYSTEM_PROMPT,
+            "cache_control": {"type": "ephemeral"},
+        }
+    ]
 
 
 def _log_job(
@@ -83,6 +89,8 @@ def _log_job(
         "usage": {
             "input_tokens": completion.usage.input_tokens,
             "output_tokens": completion.usage.output_tokens,
+            "cache_creation_input_tokens": completion.usage.cache_creation_input_tokens,
+            "cache_read_input_tokens": completion.usage.cache_read_input_tokens,
         },
     }
     JOB_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -100,12 +108,12 @@ def _build_content(pdf_bytes: bytes) -> tuple[list[dict], str]:
     if route.classify(pdf_bytes).route == route.NATIVE:
         # Fast path: native text layer — cheap, no page images.
         text = parse.extract_text(pdf_bytes)
-        return [{"type": "text", "text": f"{_prompt()}\n\nINVOICE TEXT:\n{text}"}], text
+        return [{"type": "text", "text": f"INVOICE TEXT:\n{text}"}], text
 
     # OCR hybrid: Markdown for reliable tokens + the page image(s) for layout.
     ocr = parse.ocr(pdf_bytes)
     content: list[dict] = [
-        {"type": "text", "text": f"{_prompt()}\n\nINVOICE MARKDOWN (OCR):\n{ocr.markdown}"}
+        {"type": "text", "text": f"INVOICE MARKDOWN (OCR):\n{ocr.markdown}"}
     ]
     for image in ocr.page_images:
         content.append(
@@ -135,6 +143,7 @@ def _sampled_invoice(inst, model: str, content: list[dict], source_text: str):
             max_tokens=8192,
             max_retries=MAX_RETRIES,
             response_model=Invoice,
+            system=_system(),  # cached instructions + few-shot prefix (T16)
             messages=[{"role": "user", "content": content}],
         )
         if completion.stop_reason == "max_tokens":
@@ -186,11 +195,14 @@ def extract_invoice(
     )
     invoice, model_used, completion = _extract_cascade(inst, content, source_text)
 
-    # Log which tier produced the result + whether the cascade escalated (§5).
+    # Log which tier produced the result, escalation, and cache activity (§5, §8).
+    u = completion.usage
     print(
         f"[extract] model_used={model_used} escalated={model_used != CASCADE[0]} "
-        f"n_samples={_N_SAMPLES} input_tokens={completion.usage.input_tokens} "
-        f"output_tokens={completion.usage.output_tokens} max_retries={MAX_RETRIES}",
+        f"n_samples={_N_SAMPLES} input_tokens={u.input_tokens} "
+        f"output_tokens={u.output_tokens} "
+        f"cache_write={u.cache_creation_input_tokens} cache_read={u.cache_read_input_tokens} "
+        f"max_retries={MAX_RETRIES}",
         file=sys.stderr,
     )
     if job_id is not None:
