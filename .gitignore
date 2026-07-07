@@ -9,3 +9,7 @@ logs/
 *.pdf
 !samples/**/*.pdf
 !eval/**/*.pdf
+
+# Local extraction cache (T19): cost-saving cache of model outputs, regenerable
+# via `python eval/run_report.py`. report.md is the committed proof, not this.
+eval/extractions/
