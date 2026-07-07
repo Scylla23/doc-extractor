@@ -1,0 +1,67 @@
+{
+  "vendor_name": {
+    "value": "Umbrella Logistics"
+  },
+  "invoice_number": {
+    "value": "INV-1048"
+  },
+  "invoice_date": {
+    "value": "2026-11-26"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 147.61
+      },
+      "amount": {
+        "value": 590.44
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 40.23
+      },
+      "amount": {
+        "value": 321.84
+      }
+    },
+    {
+      "description": {
+        "value": "Copper piping, 10ft"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 394.97
+      },
+      "amount": {
+        "value": 1974.85
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2887.13
+  },
+  "tax": {
+    "value": 577.43
+  },
+  "total": {
+    "value": 3464.56
+  }
+}

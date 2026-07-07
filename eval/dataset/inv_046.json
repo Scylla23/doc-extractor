@@ -1,0 +1,75 @@
+{
+  "vendor_name": {
+    "value": "Cyberdyne Systems"
+  },
+  "invoice_number": {
+    "value": "INV-1046"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 78.85
+      },
+      "amount": {
+        "value": 236.55
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 47.16
+      },
+      "amount": {
+        "value": 235.8
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 281.25
+      },
+      "amount": {
+        "value": 562.5
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 388.97
+      },
+      "amount": {
+        "value": 1555.88
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2590.73
+  },
+  "total": {
+    "value": 2849.8
+  }
+}

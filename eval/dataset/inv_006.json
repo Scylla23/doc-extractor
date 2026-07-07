@@ -1,0 +1,81 @@
+{
+  "vendor_name": {
+    "value": "Vandelay Imports"
+  },
+  "invoice_number": {
+    "value": "INV-1006"
+  },
+  "invoice_date": {
+    "value": "2026-07-09"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 188.24
+      },
+      "amount": {
+        "value": 564.72
+      }
+    },
+    {
+      "description": {
+        "value": "Copper piping, 10ft"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 352.4
+      },
+      "amount": {
+        "value": 1762.0
+      }
+    },
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 306.52
+      },
+      "amount": {
+        "value": 613.04
+      }
+    },
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 365.92
+      },
+      "amount": {
+        "value": 3293.28
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 6233.04
+  },
+  "tax": {
+    "value": 623.3
+  },
+  "total": {
+    "value": 6856.34
+  }
+}

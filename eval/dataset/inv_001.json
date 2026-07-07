@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Acme Industrial Supply"
+  },
+  "invoice_number": {
+    "value": "INV-1001"
+  },
+  "invoice_date": {
+    "value": "2026-09-20"
+  },
+  "currency": {
+    "value": "INR"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 19.75
+      },
+      "amount": {
+        "value": 19.75
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 19.75
+  },
+  "tax": {
+    "value": 0.99
+  },
+  "total": {
+    "value": 20.74
+  }
+}

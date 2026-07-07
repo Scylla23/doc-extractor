@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Pied Piper Data"
+  },
+  "invoice_number": {
+    "value": "INV-1011"
+  },
+  "invoice_date": {
+    "value": "2026-08-01"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 60.22
+      },
+      "amount": {
+        "value": 361.32
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 361.32
+  },
+  "tax": {
+    "value": 18.07
+  },
+  "total": {
+    "value": 379.39
+  }
+}

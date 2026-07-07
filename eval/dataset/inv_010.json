@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Acme Industrial Supply"
+  },
+  "invoice_number": {
+    "value": "INV-1010"
+  },
+  "invoice_date": {
+    "value": "2026-05-18"
+  },
+  "currency": {
+    "value": "INR"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 299.96
+      },
+      "amount": {
+        "value": 2099.72
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2099.72
+  },
+  "tax": {
+    "value": 419.94
+  },
+  "total": {
+    "value": 2519.66
+  }
+}

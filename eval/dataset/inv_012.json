@@ -1,0 +1,67 @@
+{
+  "vendor_name": {
+    "value": "Hooli Cloud Services"
+  },
+  "invoice_number": {
+    "value": "INV-1012"
+  },
+  "invoice_date": {
+    "value": "2026-09-25"
+  },
+  "currency": {
+    "value": "EUR"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Security audit"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 456.75
+      },
+      "amount": {
+        "value": 4110.75
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 421.63
+      },
+      "amount": {
+        "value": 2108.15
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 80.66
+      },
+      "amount": {
+        "value": 322.64
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 6541.54
+  },
+  "tax": {
+    "value": 327.08
+  },
+  "total": {
+    "value": 6868.62
+  }
+}

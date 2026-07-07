@@ -1,0 +1,67 @@
+{
+  "vendor_name": {
+    "value": "Initech Software"
+  },
+  "invoice_number": {
+    "value": "INV-1018"
+  },
+  "invoice_date": {
+    "value": "2026-06-14"
+  },
+  "currency": {
+    "value": "INR"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 271.92
+      },
+      "amount": {
+        "value": 1087.68
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 125.28
+      },
+      "amount": {
+        "value": 1002.24
+      }
+    },
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 99.25
+      },
+      "amount": {
+        "value": 694.75
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2784.67
+  },
+  "tax": {
+    "value": 278.47
+  },
+  "total": {
+    "value": 3063.14
+  }
+}

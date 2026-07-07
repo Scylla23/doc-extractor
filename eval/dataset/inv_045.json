@@ -1,0 +1,585 @@
+{
+  "vendor_name": {
+    "value": "Soylent Foods"
+  },
+  "invoice_number": {
+    "value": "INV-1045"
+  },
+  "invoice_date": {
+    "value": "2026-02-13"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Printer toner cartridge"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 255.45
+      },
+      "amount": {
+        "value": 510.9
+      }
+    },
+    {
+      "description": {
+        "value": "Security audit"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 425.54
+      },
+      "amount": {
+        "value": 425.54
+      }
+    },
+    {
+      "description": {
+        "value": "Printer toner cartridge"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 57.24
+      },
+      "amount": {
+        "value": 457.92
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 355.12
+      },
+      "amount": {
+        "value": 2840.96
+      }
+    },
+    {
+      "description": {
+        "value": "Copper piping, 10ft"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 368.23
+      },
+      "amount": {
+        "value": 1104.69
+      }
+    },
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 309.88
+      },
+      "amount": {
+        "value": 1549.4
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 388.45
+      },
+      "amount": {
+        "value": 3496.05
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 413.74
+      },
+      "amount": {
+        "value": 2896.18
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 164.54
+      },
+      "amount": {
+        "value": 822.7
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 143.07
+      },
+      "amount": {
+        "value": 286.14
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 376.49
+      },
+      "amount": {
+        "value": 1505.96
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 171.52
+      },
+      "amount": {
+        "value": 1200.64
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 95.01
+      },
+      "amount": {
+        "value": 570.06
+      }
+    },
+    {
+      "description": {
+        "value": "Printer toner cartridge"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 399.93
+      },
+      "amount": {
+        "value": 2399.58
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 440.76
+      },
+      "amount": {
+        "value": 2203.8
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 280.12
+      },
+      "amount": {
+        "value": 1400.6
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 47.38
+      },
+      "amount": {
+        "value": 189.52
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 246.85
+      },
+      "amount": {
+        "value": 1727.95
+      }
+    },
+    {
+      "description": {
+        "value": "Copper piping, 10ft"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 346.85
+      },
+      "amount": {
+        "value": 1387.4
+      }
+    },
+    {
+      "description": {
+        "value": "Consulting services"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 226.85
+      },
+      "amount": {
+        "value": 1814.8
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 150.65
+      },
+      "amount": {
+        "value": 301.3
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 156.57
+      },
+      "amount": {
+        "value": 626.28
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 239.26
+      },
+      "amount": {
+        "value": 1435.56
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 215.62
+      },
+      "amount": {
+        "value": 1293.72
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 168.74
+      },
+      "amount": {
+        "value": 1518.66
+      }
+    },
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 139.1
+      },
+      "amount": {
+        "value": 1112.8
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 64.72
+      },
+      "amount": {
+        "value": 258.88
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 64.18
+      },
+      "amount": {
+        "value": 385.08
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 99.81
+      },
+      "amount": {
+        "value": 299.43
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 141.87
+      },
+      "amount": {
+        "value": 1134.96
+      }
+    },
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 300.41
+      },
+      "amount": {
+        "value": 2703.69
+      }
+    },
+    {
+      "description": {
+        "value": "Printer toner cartridge"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 151.64
+      },
+      "amount": {
+        "value": 606.56
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 154.62
+      },
+      "amount": {
+        "value": 463.86
+      }
+    },
+    {
+      "description": {
+        "value": "Consulting services"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 67.66
+      },
+      "amount": {
+        "value": 608.94
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 278.91
+      },
+      "amount": {
+        "value": 278.91
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 320.75
+      },
+      "amount": {
+        "value": 962.25
+      }
+    },
+    {
+      "description": {
+        "value": "Consulting services"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 55.78
+      },
+      "amount": {
+        "value": 446.24
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 237.35
+      },
+      "amount": {
+        "value": 1186.75
+      }
+    },
+    {
+      "description": {
+        "value": "Consulting services"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 96.26
+      },
+      "amount": {
+        "value": 577.56
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 470.83
+      },
+      "amount": {
+        "value": 2354.15
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 47346.37
+  },
+  "tax": {
+    "value": 0.0
+  },
+  "total": {
+    "value": 47356.37
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "vendor_name": {
+    "value": "Cyberdyne Systems"
+  },
+  "invoice_number": {
+    "value": "INV-1049"
+  },
+  "invoice_date": {
+    "value": "2026-12-27"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 116.28
+      },
+      "amount": {
+        "value": 1046.52
+      }
+    },
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 414.18
+      },
+      "amount": {
+        "value": 2070.9
+      }
+    },
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 87.13
+      },
+      "amount": {
+        "value": 87.13
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 3204.55
+  },
+  "tax": {
+    "value": 640.91
+  },
+  "total": {
+    "value": 3845.46
+  }
+}

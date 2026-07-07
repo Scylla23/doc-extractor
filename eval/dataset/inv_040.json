@@ -1,0 +1,585 @@
+{
+  "vendor_name": {
+    "value": "Acme Industrial Supply"
+  },
+  "invoice_number": {
+    "value": "INV-1040"
+  },
+  "invoice_date": {
+    "value": "2026-10-22"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 410.12
+      },
+      "amount": {
+        "value": 820.24
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 338.03
+      },
+      "amount": {
+        "value": 1352.12
+      }
+    },
+    {
+      "description": {
+        "value": "Consulting services"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 77.94
+      },
+      "amount": {
+        "value": 311.76
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 492.05
+      },
+      "amount": {
+        "value": 1968.2
+      }
+    },
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 230.43
+      },
+      "amount": {
+        "value": 460.86
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 360.58
+      },
+      "amount": {
+        "value": 1442.32
+      }
+    },
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 202.83
+      },
+      "amount": {
+        "value": 1622.64
+      }
+    },
+    {
+      "description": {
+        "value": "Security audit"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 446.87
+      },
+      "amount": {
+        "value": 446.87
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 390.32
+      },
+      "amount": {
+        "value": 780.64
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 403.03
+      },
+      "amount": {
+        "value": 1209.09
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 234.95
+      },
+      "amount": {
+        "value": 2114.55
+      }
+    },
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 459.15
+      },
+      "amount": {
+        "value": 1836.6
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 71.0
+      },
+      "amount": {
+        "value": 568.0
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 494.01
+      },
+      "amount": {
+        "value": 4446.09
+      }
+    },
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 475.27
+      },
+      "amount": {
+        "value": 2851.62
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 308.26
+      },
+      "amount": {
+        "value": 2466.08
+      }
+    },
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 216.24
+      },
+      "amount": {
+        "value": 1946.16
+      }
+    },
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 225.73
+      },
+      "amount": {
+        "value": 2031.57
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 227.78
+      },
+      "amount": {
+        "value": 1822.24
+      }
+    },
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 420.73
+      },
+      "amount": {
+        "value": 1682.92
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 244.88
+      },
+      "amount": {
+        "value": 2203.92
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 222.74
+      },
+      "amount": {
+        "value": 1113.7
+      }
+    },
+    {
+      "description": {
+        "value": "Printer toner cartridge"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 121.07
+      },
+      "amount": {
+        "value": 605.35
+      }
+    },
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 447.05
+      },
+      "amount": {
+        "value": 2682.3
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 79.66
+      },
+      "amount": {
+        "value": 238.98
+      }
+    },
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 354.68
+      },
+      "amount": {
+        "value": 1064.04
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 206.76
+      },
+      "amount": {
+        "value": 1447.32
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 210.81
+      },
+      "amount": {
+        "value": 1686.48
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 197.79
+      },
+      "amount": {
+        "value": 1384.53
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 429.08
+      },
+      "amount": {
+        "value": 429.08
+      }
+    },
+    {
+      "description": {
+        "value": "Printer toner cartridge"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 241.1
+      },
+      "amount": {
+        "value": 1687.7
+      }
+    },
+    {
+      "description": {
+        "value": "Security audit"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 377.97
+      },
+      "amount": {
+        "value": 1889.85
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 271.42
+      },
+      "amount": {
+        "value": 1899.94
+      }
+    },
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 400.93
+      },
+      "amount": {
+        "value": 3608.37
+      }
+    },
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 246.67
+      },
+      "amount": {
+        "value": 986.68
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 245.39
+      },
+      "amount": {
+        "value": 1717.73
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 336.09
+      },
+      "amount": {
+        "value": 2016.54
+      }
+    },
+    {
+      "description": {
+        "value": "Security audit"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 363.47
+      },
+      "amount": {
+        "value": 2544.29
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 460.17
+      },
+      "amount": {
+        "value": 3681.36
+      }
+    },
+    {
+      "description": {
+        "value": "License renewal"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 18.35
+      },
+      "amount": {
+        "value": 165.15
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 65233.88
+  },
+  "tax": {
+    "value": 13046.78
+  },
+  "total": {
+    "value": 78290.66
+  }
+}

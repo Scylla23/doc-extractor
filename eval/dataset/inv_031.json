@@ -1,0 +1,53 @@
+{
+  "vendor_name": {
+    "value": "Globex Corporation"
+  },
+  "invoice_number": {
+    "value": "INV-1031"
+  },
+  "invoice_date": {
+    "value": "2026-04-28"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 391.16
+      },
+      "amount": {
+        "value": 2346.96
+      }
+    },
+    {
+      "description": {
+        "value": "Support hours"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 487.05
+      },
+      "amount": {
+        "value": 3409.35
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 5756.31
+  },
+  "tax": {
+    "value": 287.82
+  },
+  "total": {
+    "value": 6044.13
+  }
+}

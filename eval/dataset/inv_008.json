@@ -1,0 +1,53 @@
+{
+  "vendor_name": {
+    "value": "Hooli Cloud Services"
+  },
+  "invoice_number": {
+    "value": "INV-1008"
+  },
+  "invoice_date": {
+    "value": "2026-12-18"
+  },
+  "currency": {
+    "value": "INR"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Copper piping, 10ft"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 442.92
+      },
+      "amount": {
+        "value": 3100.44
+      }
+    },
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 75.72
+      },
+      "amount": {
+        "value": 605.76
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 3706.2
+  },
+  "tax": {
+    "value": 185.31
+  },
+  "total": {
+    "value": 3891.51
+  }
+}

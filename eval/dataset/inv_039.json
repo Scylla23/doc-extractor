@@ -1,0 +1,67 @@
+{
+  "vendor_name": {
+    "value": "Stark Components"
+  },
+  "invoice_number": {
+    "value": "INV-1039"
+  },
+  "invoice_date": {
+    "value": "2026-11-03"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 217.79
+      },
+      "amount": {
+        "value": 871.16
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 235.17
+      },
+      "amount": {
+        "value": 1411.02
+      }
+    },
+    {
+      "description": {
+        "value": "Data migration"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 258.03
+      },
+      "amount": {
+        "value": 1032.12
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 3314.3
+  },
+  "tax": {
+    "value": 165.72
+  },
+  "total": {
+    "value": 3480.02
+  }
+}

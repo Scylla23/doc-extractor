@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Acme Industrial Supply"
+  },
+  "invoice_number": {
+    "value": "INV-1013"
+  },
+  "invoice_date": {
+    "value": "2026-05-08"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 8
+      },
+      "unit_price": {
+        "value": 14.64
+      },
+      "amount": {
+        "value": 117.12
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 117.12
+  },
+  "tax": {
+    "value": 9.37
+  },
+  "total": {
+    "value": 126.49
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "vendor_name": {
+    "value": "Soylent Foods"
+  },
+  "invoice_number": {
+    "value": "INV-1042"
+  },
+  "invoice_date": {
+    "value": "2026-10-07"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 115.99
+      },
+      "amount": {
+        "value": 695.94
+      }
+    },
+    {
+      "description": {
+        "value": "Steel bracket, 4in"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 378.35
+      },
+      "amount": {
+        "value": 378.35
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 420.42
+      },
+      "amount": {
+        "value": 1681.68
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 3
+      },
+      "unit_price": {
+        "value": 123.08
+      },
+      "amount": {
+        "value": 369.24
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 3125.21
+  },
+  "tax": {
+    "value": 0.0
+  },
+  "total": {
+    "value": 3125.21
+  }
+}

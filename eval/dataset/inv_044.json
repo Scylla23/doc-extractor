@@ -1,0 +1,53 @@
+{
+  "vendor_name": {
+    "value": "Initech Software"
+  },
+  "invoice_number": {
+    "value": "INV-1044"
+  },
+  "invoice_date": {
+    "value": "2026-06-18"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 350.11
+      },
+      "amount": {
+        "value": 700.22
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 399.13
+      },
+      "amount": {
+        "value": 798.26
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 1498.48
+  },
+  "tax": {
+    "value": 0.0
+  },
+  "total": {
+    "value": 1498.48
+  }
+}

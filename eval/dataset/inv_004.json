@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Umbrella Logistics"
+  },
+  "invoice_number": {
+    "value": "INV-1004"
+  },
+  "invoice_date": {
+    "value": "2026-06-19"
+  },
+  "currency": {
+    "value": "INR"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Security audit"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 278.26
+      },
+      "amount": {
+        "value": 556.52
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 556.52
+  },
+  "tax": {
+    "value": 111.3
+  },
+  "total": {
+    "value": 667.82
+  }
+}

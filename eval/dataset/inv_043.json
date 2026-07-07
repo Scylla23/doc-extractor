@@ -1,0 +1,81 @@
+{
+  "vendor_name": {
+    "value": "Umbrella Logistics"
+  },
+  "invoice_number": {
+    "value": "INV-1043"
+  },
+  "invoice_date": {
+    "value": "2026-07-23"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 88.06
+      },
+      "amount": {
+        "value": 528.36
+      }
+    },
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 390.01
+      },
+      "amount": {
+        "value": 780.02
+      }
+    },
+    {
+      "description": {
+        "value": "Consulting services"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 58.51
+      },
+      "amount": {
+        "value": 292.55
+      }
+    },
+    {
+      "description": {
+        "value": "Training session"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 290.02
+      },
+      "amount": {
+        "value": 1450.1
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 3051.03
+  },
+  "tax": {
+    "value": 305.1
+  },
+  "total": {
+    "value": 3356.13
+  }
+}

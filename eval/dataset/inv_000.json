@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Hooli Cloud Services"
+  },
+  "invoice_number": {
+    "value": "INV-1000"
+  },
+  "invoice_date": {
+    "value": "2026-11-24"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 126.22
+      },
+      "amount": {
+        "value": 631.1
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 631.1
+  },
+  "tax": {
+    "value": 0.0
+  },
+  "total": {
+    "value": 631.1
+  }
+}

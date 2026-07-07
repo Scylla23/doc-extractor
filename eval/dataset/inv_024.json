@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Umbrella Logistics"
+  },
+  "invoice_number": {
+    "value": "INV-1024"
+  },
+  "invoice_date": {
+    "value": "2026-06-09"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 330.4
+      },
+      "amount": {
+        "value": 2312.8
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2312.8
+  },
+  "tax": {
+    "value": 462.56
+  },
+  "total": {
+    "value": 2775.36
+  }
+}

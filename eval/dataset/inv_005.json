@@ -1,0 +1,39 @@
+{
+  "vendor_name": {
+    "value": "Stark Components"
+  },
+  "invoice_number": {
+    "value": "INV-1005"
+  },
+  "invoice_date": {
+    "value": "2026-02-13"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 4
+      },
+      "unit_price": {
+        "value": 387.67
+      },
+      "amount": {
+        "value": 1550.68
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 1550.68
+  },
+  "tax": {
+    "value": 77.53
+  },
+  "total": {
+    "value": 1628.21
+  }
+}

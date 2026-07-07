@@ -1,0 +1,53 @@
+{
+  "vendor_name": {
+    "value": "Soylent Foods"
+  },
+  "invoice_number": {
+    "value": "INV-1003"
+  },
+  "invoice_date": {
+    "value": "2026-01-24"
+  },
+  "currency": {
+    "value": "GBP"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Widget assembly kit"
+      },
+      "quantity": {
+        "value": 2
+      },
+      "unit_price": {
+        "value": 50.91
+      },
+      "amount": {
+        "value": 101.82
+      }
+    },
+    {
+      "description": {
+        "value": "Extended warranty"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 424.51
+      },
+      "amount": {
+        "value": 2547.06
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2648.88
+  },
+  "tax": {
+    "value": 211.91
+  },
+  "total": {
+    "value": 2860.79
+  }
+}

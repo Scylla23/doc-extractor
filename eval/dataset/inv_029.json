@@ -1,0 +1,67 @@
+{
+  "vendor_name": {
+    "value": "Pied Piper Data"
+  },
+  "invoice_number": {
+    "value": "INV-1029"
+  },
+  "invoice_date": {
+    "value": "2026-02-03"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 1
+      },
+      "unit_price": {
+        "value": 170.11
+      },
+      "amount": {
+        "value": 170.11
+      }
+    },
+    {
+      "description": {
+        "value": "Freight & handling"
+      },
+      "quantity": {
+        "value": 5
+      },
+      "unit_price": {
+        "value": 84.98
+      },
+      "amount": {
+        "value": 424.9
+      }
+    },
+    {
+      "description": {
+        "value": "Installation labor"
+      },
+      "quantity": {
+        "value": 9
+      },
+      "unit_price": {
+        "value": 354.31
+      },
+      "amount": {
+        "value": 3188.79
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 3783.8
+  },
+  "tax": {
+    "value": 0.0
+  },
+  "total": {
+    "value": 3783.8
+  }
+}

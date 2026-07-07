@@ -1,0 +1,53 @@
+{
+  "vendor_name": {
+    "value": "Umbrella Logistics"
+  },
+  "invoice_number": {
+    "value": "INV-1030"
+  },
+  "invoice_date": {
+    "value": "2026-01-12"
+  },
+  "currency": {
+    "value": "USD"
+  },
+  "line_items": [
+    {
+      "description": {
+        "value": "Cloud hosting (monthly)"
+      },
+      "quantity": {
+        "value": 6
+      },
+      "unit_price": {
+        "value": 293.34
+      },
+      "amount": {
+        "value": 1760.04
+      }
+    },
+    {
+      "description": {
+        "value": "Design retainer"
+      },
+      "quantity": {
+        "value": 7
+      },
+      "unit_price": {
+        "value": 68.09
+      },
+      "amount": {
+        "value": 476.63
+      }
+    }
+  ],
+  "subtotal": {
+    "value": 2236.67
+  },
+  "tax": {
+    "value": 178.93
+  },
+  "total": {
+    "value": 2415.6
+  }
+}
