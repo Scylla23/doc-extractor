@@ -20,9 +20,9 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 
 ## Checklist index
 
-- [ ] T1 Project scaffold, deps, env, gitignore
-- [ ] T2 Invoice Pydantic schema (Field / LineItem / Invoice)
-- [ ] T3 Walking skeleton: PDF → Claude Structured Outputs → validated JSON
+- [x] T1 Project scaffold, deps, env, gitignore
+- [x] T2 Invoice Pydantic schema (Field / LineItem / Invoice)
+- [x] T3 Walking skeleton: PDF → Claude Structured Outputs → validated JSON
 - [ ] T4 Sample invoice + M0 README & screenshots
 - [ ] T5 FastAPI `POST /extract` wrapping the extractor
 - [ ] T6 PyMuPDF native-text fast path
