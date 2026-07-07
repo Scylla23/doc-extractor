@@ -15,6 +15,7 @@ import anthropic
 from anthropic.types import Message, TextBlock, Usage
 from instructor.core import InstructorRetryException
 
+import app.extract as extract_mod
 from app.extract import MAX_RETRIES, extract_invoice
 from app.schema import Invoice
 
@@ -45,9 +46,11 @@ def _patched_client(*replies: Message):
     )
 
 
+# Self-heal is a per-sample concern; pin to one self-consistency sample (T14) so
+# the retry-count assertions isolate the retry mechanism, not the sample loop.
 def test_retry_then_success() -> None:
     client, patcher = _patched_client(_reply("NOT JSON"), _reply(_GOOD))
-    with patcher as m:
+    with mock.patch.object(extract_mod, "_N_SAMPLES", 1), patcher as m:
         inv = extract_invoice(_PDF, client=client)
     assert isinstance(inv, Invoice)
     assert inv.vendor_name.value == "Acme"
@@ -57,7 +60,7 @@ def test_retry_then_success() -> None:
 def test_clean_raise_after_cap() -> None:
     client, patcher = _patched_client(*[_reply("STILL NOT JSON")] * (MAX_RETRIES + 1))
     raised = False
-    with patcher as m:
+    with mock.patch.object(extract_mod, "_N_SAMPLES", 1), patcher as m:
         try:
             extract_invoice(_PDF, client=client)
         except InstructorRetryException:
