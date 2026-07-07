@@ -15,7 +15,9 @@ error, bounded to MAX_RETRIES, rather than crashing.
 from __future__ import annotations
 
 import base64
+import json
 import sys
+from pathlib import Path
 
 import anthropic
 import instructor
@@ -38,6 +40,10 @@ _MIN_TEXT_CHARS = 100
 # many times before raising cleanly. Bounded — no loops.
 MAX_RETRIES = 2
 
+# ponytail: append-only JSONL per-job log; a real store is Supabase in backlog.
+# Never contains the API key — only prompt text, model id, raw output, usage.
+JOB_LOG_PATH = Path("logs/jobs.jsonl")
+
 
 def _prompt() -> str:
     # Instructor injects the JSON schema itself (response_model=Invoice), so we
@@ -52,10 +58,33 @@ def _prompt() -> str:
     )
 
 
+def _log_job(job_id: str, prompt: str, completion: anthropic.types.Message) -> None:
+    """Append one reproducibility record per job (§5): prompt, model, raw output,
+    token usage. No API key is ever written."""
+    raw = next((b.text for b in completion.content if b.type == "text"), "")
+    record = {
+        "job_id": job_id,
+        "model": completion.model,
+        "prompt": prompt,
+        "raw_output": raw,
+        "usage": {
+            "input_tokens": completion.usage.input_tokens,
+            "output_tokens": completion.usage.output_tokens,
+        },
+    }
+    JOB_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with JOB_LOG_PATH.open("a") as f:
+        f.write(json.dumps(record) + "\n")
+
+
 def extract_invoice(
-    pdf_bytes: bytes, *, client: anthropic.Anthropic | None = None
+    pdf_bytes: bytes,
+    *,
+    client: anthropic.Anthropic | None = None,
+    job_id: str | None = None,
 ) -> Invoice:
-    """PDF bytes -> validated Invoice. `client` is injectable for tests."""
+    """PDF bytes -> validated Invoice. `client` is injectable for tests; when
+    `job_id` is given, a per-job reproducibility record is logged (T10)."""
     text = parse.extract_text(pdf_bytes)
 
     if len(text.strip()) >= _MIN_TEXT_CHARS:
@@ -95,14 +124,16 @@ def extract_invoice(
             "Extraction hit max_tokens — JSON was truncated; raise max_tokens."
         )
 
-    # Log token usage + retry cap (feeds the fast-path comparison and
-    # reproducibility; structured per-job logging is T10).
+    # Log token usage to stderr (feeds the fast-path comparison).
     print(
         f"[extract] model={completion.model} "
         f"input_tokens={completion.usage.input_tokens} "
         f"output_tokens={completion.usage.output_tokens} max_retries={MAX_RETRIES}",
         file=sys.stderr,
     )
+    if job_id is not None:
+        prompt = next(b["text"] for b in content if b["type"] == "text")
+        _log_job(job_id, prompt, completion)
     return invoice
 
 

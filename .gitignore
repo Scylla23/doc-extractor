@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+logs/
 
 # PDFs are ignored except curated samples/eval sets
 *.pdf

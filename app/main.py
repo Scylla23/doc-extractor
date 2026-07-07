@@ -38,7 +38,7 @@ def _process_job(job_id: str, pdf_bytes: bytes) -> None:
     job = _jobs[job_id]
     job.status = "processing"
     try:
-        job.result = extract_invoice(pdf_bytes)
+        job.result = extract_invoice(pdf_bytes, job_id=job_id)
         job.status = "done"
     except Exception as exc:  # record any failure so the poller sees it
         job.status = "error"
