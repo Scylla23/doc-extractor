@@ -3,5 +3,6 @@ pydantic
 python-dotenv
 pymupdf
 fastapi
+python-multipart
 uvicorn
 instructor
