@@ -29,9 +29,14 @@ from app.schema import Invoice
 
 load_dotenv()  # so `python -m app.extract` picks up ANTHROPIC_API_KEY from .env
 
-# ponytail: Haiku 4.5 is the MVP default per the model cascade; Sonnet/Opus
-# escalation on low confidence is T15, not now.
-MODEL = "claude-haiku-4-5"
+# Model cascade (T15, PRD §8): start on Haiku 4.5, escalate to Sonnet 5 then
+# Opus 4.8 only when a critical field comes back low-confidence. Bounded — one
+# pass per tier, no loops. Reserve the pricier models for the hard ~20% (§12).
+CASCADE = ("claude-haiku-4-5", "claude-sonnet-5", "claude-opus-4-8")
+
+# Escalate when any of these load-bearing fields would need human review. Other
+# low-confidence fields (e.g. an inferred currency) get flagged, not escalated.
+_CRITICAL_FIELDS = ("vendor_name", "invoice_number", "total")
 
 # Self-consistency samples for the confidence engine (T14, PRD §4 Finding 3):
 # extract N times and score field agreement. ponytail: N model calls per doc,
@@ -116,30 +121,17 @@ def _build_content(pdf_bytes: bytes) -> tuple[list[dict], str]:
     return content, ocr.markdown
 
 
-def extract_invoice(
-    pdf_bytes: bytes,
-    *,
-    client: anthropic.Anthropic | None = None,
-    job_id: str | None = None,
-) -> Invoice:
-    """PDF bytes -> validated Invoice. `client` is injectable for tests; when
-    `job_id` is given, a per-job reproducibility record is logged (T10)."""
-    content, source_text = _build_content(pdf_bytes)
+def _sampled_invoice(inst, model: str, content: list[dict], source_text: str):
+    """Draw N self-consistency samples on one model and blend confidence (T14).
 
-    # Instructor validates the reply against `Invoice` and, on a structural
-    # failure, re-prompts with the error (bounded by MAX_RETRIES). JSON mode, not
-    # tool/structured-output mode — the grammar compiler times out on our schema.
-    inst = instructor.from_anthropic(
-        client or anthropic.Anthropic(), mode=instructor.Mode.ANTHROPIC_JSON
-    )
-
-    # Self-consistency: sample the extraction N times; the confidence engine (T14)
-    # scores how many samples agree per field. Bounded loop, no growth.
+    Returns (confidence-scored Invoice, last completion). Instructor validates
+    each reply against `Invoice` and self-heals on structural failure (T8).
+    """
     samples: list[Invoice] = []
     completion = None
     for _ in range(_N_SAMPLES):
         invoice, completion = inst.messages.create_with_completion(
-            model=MODEL,
+            model=model,
             max_tokens=8192,
             max_retries=MAX_RETRIES,
             response_model=Invoice,
@@ -150,15 +142,54 @@ def extract_invoice(
                 "Extraction hit max_tokens — JSON was truncated; raise max_tokens."
             )
         samples.append(invoice)
+    return confidence.apply_confidence(samples, source_text), completion
 
-    # Blend self-consistency + verbatim-in-source + passes-validation -> per-field
-    # confidence + review_required on the primary sample (PRD §4 Finding 3).
-    invoice = confidence.apply_confidence(samples, source_text)
 
-    # Log token usage to stderr (last sample is representative; feeds cost view).
+def _needs_escalation(invoice: Invoice) -> bool:
+    """True if a critical field is low-confidence enough to warrant a stronger model."""
+    return any(
+        getattr(invoice, name) is not None and getattr(invoice, name).review_required
+        for name in _CRITICAL_FIELDS
+    )
+
+
+def _extract_cascade(inst, content: list[dict], source_text: str, *, sampler=None):
+    """Run the model cascade Haiku -> Sonnet -> Opus, escalating one tier at a
+    time while a critical field stays low-confidence. Bounded: one pass per tier,
+    stops early once critical fields pass. Returns (invoice, model_used, completion).
+    `sampler` is injectable for tests.
+    """
+    sampler = sampler or _sampled_invoice
+    invoice = model_used = completion = None
+    for model in CASCADE:
+        invoice, completion = sampler(inst, model, content, source_text)
+        model_used = model
+        if not _needs_escalation(invoice):
+            break
+    return invoice, model_used, completion
+
+
+def extract_invoice(
+    pdf_bytes: bytes,
+    *,
+    client: anthropic.Anthropic | None = None,
+    job_id: str | None = None,
+) -> Invoice:
+    """PDF bytes -> validated Invoice. `client` is injectable for tests; when
+    `job_id` is given, a per-job reproducibility record is logged (T10)."""
+    content, source_text = _build_content(pdf_bytes)
+
+    # JSON mode, not tool/structured-output mode — the grammar compiler times out
+    # on our confidence-wrapper-per-field schema.
+    inst = instructor.from_anthropic(
+        client or anthropic.Anthropic(), mode=instructor.Mode.ANTHROPIC_JSON
+    )
+    invoice, model_used, completion = _extract_cascade(inst, content, source_text)
+
+    # Log which tier produced the result + whether the cascade escalated (§5).
     print(
-        f"[extract] model={completion.model} n_samples={_N_SAMPLES} "
-        f"input_tokens={completion.usage.input_tokens} "
+        f"[extract] model_used={model_used} escalated={model_used != CASCADE[0]} "
+        f"n_samples={_N_SAMPLES} input_tokens={completion.usage.input_tokens} "
         f"output_tokens={completion.usage.output_tokens} max_retries={MAX_RETRIES}",
         file=sys.stderr,
     )
@@ -169,14 +200,10 @@ def extract_invoice(
 
 
 def demo() -> None:
-    """Offline self-check of block assembly — no API calls.
-
-    Native sample routes to a single text block; the scanned sample routes to a
-    text block **and** an image block (T13 hybrid). `parse.ocr` is stubbed so we
-    don't spend a Mistral call just to assert the block shape.
-    """
+    """Offline self-check of block assembly + the model cascade — no API calls."""
     samples = Path(__file__).resolve().parent.parent / "samples"
 
+    # Block assembly: native -> [text]; scanned -> [text, image] (T13).
     native, _ = _build_content((samples / "sample1.pdf").read_bytes())
     assert [b["type"] for b in native] == ["text"], native
 
@@ -188,6 +215,38 @@ def demo() -> None:
         parse.ocr = orig_ocr
     types = [b["type"] for b in scanned]
     assert "text" in types and "image" in types, types  # both blocks present
+
+    # Model cascade (T15): a stub sampler controls per-tier confidence so we can
+    # assert escalation behavior without any API call.
+    def _inv(review: bool) -> Invoice:
+        inv = Invoice.model_validate({"total": {"value": 1.0}})
+        inv.total.review_required = review  # `total` is a critical field
+        return inv
+
+    def sampler_for(low_models: set):
+        calls: list[str] = []
+
+        def sampler(_inst, model, _content, _src):
+            calls.append(model)
+            return _inv(review=model in low_models), None
+
+        return sampler, calls
+
+    # Low on Haiku, fine on Sonnet -> exactly one escalation, stops at Sonnet.
+    sampler, calls = sampler_for({CASCADE[0]})
+    _, used, _ = _extract_cascade(None, [], "", sampler=sampler)
+    assert used == CASCADE[1], used
+    assert calls == [CASCADE[0], CASCADE[1]], calls  # one escalation, no further
+
+    # Clean on Haiku -> no escalation.
+    sampler, calls = sampler_for(set())
+    _, used, _ = _extract_cascade(None, [], "", sampler=sampler)
+    assert used == CASCADE[0] and calls == [CASCADE[0]], calls
+
+    # Low on every tier -> bounded: runs each tier once, stops at Opus, no loop.
+    sampler, calls = sampler_for(set(CASCADE))
+    _, used, _ = _extract_cascade(None, [], "", sampler=sampler)
+    assert used == CASCADE[-1] and calls == list(CASCADE), calls
 
     print("extract demo OK")
 
