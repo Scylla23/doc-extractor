@@ -1,0 +1,10 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# PDFs are ignored except curated samples/eval sets
+*.pdf
+!samples/**/*.pdf
+!eval/**/*.pdf
