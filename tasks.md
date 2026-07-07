@@ -32,7 +32,7 @@ Rules baked in: MVP is **invoices only**. Everything runs the same thin thread t
 - [x] T10 Per-job logging (prompt, model id, raw output)
 - [x] T11 Doc router: native vs scanned classifier
 - [x] T12 Mistral OCR fallback → Markdown
-- [ ] T13 Feed Markdown + page image to Claude
+- [x] T13 Feed Markdown + page image to Claude
 - [ ] T14 Multi-signal confidence engine (per field)
 - [ ] T15 Model cascade escalation on low confidence
 - [ ] T16 Prompt caching on schema/instructions prefix
