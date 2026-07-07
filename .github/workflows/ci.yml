@@ -1,0 +1,37 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        # pytest is the CI test runner only (not a runtime dep), so it is
+        # installed here rather than pinned into requirements.txt.
+        run: pip install -r requirements.txt pytest
+
+      # Offline self-checks — no API key, must always run and pass.
+      - name: Offline module self-checks
+        run: |
+          python -m app.schema
+          python -m app.validate
+          python -m app.confidence
+          python -m app.route
+          python eval/score.py
+          python eval/validate_labels.py
+
+      # Live golden-set regression test. Native-text path only, so it needs
+      # ONLY ANTHROPIC_API_KEY (no MISTRAL_API_KEY / OCR). On forks the secret is
+      # absent, so the test's skipif SKIPS it and CI stays green — graceful
+      # degradation, not a hard failure, for contributors without repo secrets.
+      - name: Golden-set regression test
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: pytest eval/test_golden.py -v
