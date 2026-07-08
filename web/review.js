@@ -27,6 +27,7 @@ async function enterReview(file, extracted, id) {
   jobId = id;
   body.dataset.state = "review";
   document.getElementById("review").hidden = false;
+  document.getElementById("reviewStatus").textContent = ""; // clear stale "Saved ✓" on re-entry
   renderLedger();
   initSelection();
   wireReviewButtons();
