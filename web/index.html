@@ -63,6 +63,36 @@
 
       <!-- Result panel: T22 injects the ledger of cited fields here. -->
       <section class="result" id="result" aria-live="polite"></section>
+
+      <!-- Review view: shown when body[data-state="review"]. Populated by review.js. -->
+      <section class="review" id="review" hidden>
+        <div class="review-bar">
+          <button type="button" class="btn" id="newFileBtn">← New file</button>
+          <span class="review-status" id="reviewStatus" aria-live="polite"></span>
+          <span class="review-actions">
+            <button type="button" class="btn" id="downloadBtn">Download JSON</button>
+            <button type="button" class="btn btn-primary" id="saveBtn">Save corrections</button>
+          </span>
+        </div>
+        <div class="review-split">
+          <div class="pdf-pane" id="pdfPane"></div>
+          <div class="data-pane" id="dataPane"></div>
+        </div>
+        <div class="sel-popover" id="selPopover" hidden>
+          <label class="sel-row">
+            Set value of
+            <select id="selField"></select>
+          </label>
+          <label class="sel-row">
+            or add field
+            <input id="selNewKey" type="text" placeholder="e.g. po_number" />
+          </label>
+          <div class="sel-actions">
+            <button type="button" class="btn" id="selApply">Apply</button>
+            <button type="button" class="btn" id="selCancel">Cancel</button>
+          </div>
+        </div>
+      </section>
     </main>
 
     <footer class="colophon">
@@ -73,5 +103,6 @@
 
   <script src="config.js"></script>
   <script src="app.js"></script>
+  <script type="module" src="review.js"></script>
 </body>
 </html>

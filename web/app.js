@@ -26,6 +26,8 @@ function isPdf(file) {
   return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 }
 
+let currentFile = null;
+
 function handleFile(file) {
   clearError();
   if (!file) return;
@@ -33,6 +35,7 @@ function handleFile(file) {
     showError(`That's not a PDF. ${file.name} — drop an invoice PDF instead.`);
     return;
   }
+  currentFile = file;
   resultEl.innerHTML = "";
   loadingFile.textContent = file.name;
   setState("loading");
@@ -63,8 +66,7 @@ async function extractFile(file) {
       if (!jr.ok) throw new Error(`Lost the job (HTTP ${jr.status}).`);
       const job = await jr.json();
       if (job.status === "done") {
-        renderResult(job.result);
-        setState("idle"); // dropzone ready for another; result shows below
+        window.enterReview(currentFile, job.result, job.job_id);
         return;
       }
       if (job.status === "error") {
@@ -90,7 +92,7 @@ const money = (f) =>
 
 const val = (f) => (f && f.value != null && f.value !== "" ? String(f.value) : "—");
 
-function fieldRow(label, field, valueText) {
+function fieldRow(label, field, valueText, path) {
   const row = document.createElement("div");
   row.className = "field-row";
   const has = field && field.value != null && field.value !== "";
@@ -103,10 +105,16 @@ function fieldRow(label, field, valueText) {
   const v = document.createElement("span");
   v.className = "field-value";
   v.textContent = valueText != null ? valueText : val(field);
+  if (path) { v.dataset.path = path; v.tabIndex = 0; v.classList.add("editable"); }
 
   row.append(l, v);
 
-  if (has) {
+  if (field && field.manual) {
+    const pill = document.createElement("span");
+    pill.className = "field-manual";
+    pill.textContent = "manual";
+    row.append(pill);
+  } else if (has) {
     const m = document.createElement("span");
     m.className = "field-meter";
     const pct = Math.round(((field.confidence ?? 0) * 100));
@@ -116,9 +124,14 @@ function fieldRow(label, field, valueText) {
   }
 
   if (field && field.source_quote) {
-    const c = document.createElement("span");
+    const c = document.createElement(field.page != null ? "button" : "span");
     c.className = "field-cite";
     c.textContent = `“${field.source_quote}”${field.page != null ? ` ·p${field.page}` : ""}`;
+    if (field.page != null) {
+      c.type = "button";
+      c.dataset.page = String(field.page);
+      c.title = "Jump to this page";
+    }
     row.append(c);
   }
   return row;
@@ -133,16 +146,16 @@ function group(title, rows) {
   return frag;
 }
 
-function renderResult(inv) {
-  resultEl.innerHTML = "";
+function buildLedger(inv) {
   inv = inv || {};
+  const frag = document.createDocumentFragment();
 
-  resultEl.append(
+  frag.append(
     group("Invoice", [
-      fieldRow("Vendor", inv.vendor_name),
-      fieldRow("Invoice №", inv.invoice_number),
-      fieldRow("Date", inv.invoice_date),
-      fieldRow("Currency", inv.currency),
+      fieldRow("Vendor", inv.vendor_name, undefined, "vendor_name"),
+      fieldRow("Invoice №", inv.invoice_number, undefined, "invoice_number"),
+      fieldRow("Date", inv.invoice_date, undefined, "invoice_date"),
+      fieldRow("Currency", inv.currency, undefined, "currency"),
     ])
   );
 
@@ -152,30 +165,34 @@ function renderResult(inv) {
       const desc = val(it.description);
       const qty = it.quantity && it.quantity.value != null ? `${val(it.quantity)} × ` : "";
       const unit = it.unit_price && it.unit_price.value != null ? ` @ ${money(it.unit_price)}` : "";
-      // The row's value reads as a line; the meter/cite track the amount field.
-      return fieldRow(`Item ${i + 1}`, it.amount, `${qty}${desc}${unit} = ${money(it.amount)}`);
+      return fieldRow(`Item ${i + 1}`, it.amount, `${qty}${desc}${unit} = ${money(it.amount)}`, `line_items.${i}.amount`);
     });
-    resultEl.append(group(`Line items (${items.length})`, rows));
+    frag.append(group(`Line items (${items.length})`, rows));
   }
 
-  resultEl.append(
+  frag.append(
     group("Totals", [
-      fieldRow("Subtotal", inv.subtotal, money(inv.subtotal)),
-      fieldRow("Tax", inv.tax, money(inv.tax)),
-      fieldRow("Total", inv.total, money(inv.total)),
+      fieldRow("Subtotal", inv.subtotal, money(inv.subtotal), "subtotal"),
+      fieldRow("Tax", inv.tax, money(inv.tax), "tax"),
+      fieldRow("Total", inv.total, money(inv.total), "total"),
     ])
   );
 
-  // Proof it's real schema-valid JSON, for the dev audience.
-  const details = document.createElement("details");
-  details.className = "raw-json";
-  const summary = document.createElement("summary");
-  summary.textContent = "Raw JSON";
-  const pre = document.createElement("pre");
-  pre.textContent = JSON.stringify(inv, null, 2);
-  details.append(summary, pre);
-  resultEl.append(details);
+  const custom = inv.custom_fields || {};
+  const keys = Object.keys(custom);
+  if (keys.length) {
+    const rows = keys.map((k) =>
+      fieldRow(k, custom[k], undefined, `custom_fields.${k}`)
+    );
+    frag.append(group(`Custom fields (${keys.length})`, rows));
+  }
+
+  return frag;
 }
+
+// Expose for review.js (loaded as a module).
+window.buildLedger = buildLedger;
+window.ledgerHelpers = { money, val, fieldRow, group };
 
 // --- wiring ---
 fileInput.addEventListener("change", () => handleFile(fileInput.files[0]));
