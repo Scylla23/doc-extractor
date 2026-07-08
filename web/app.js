@@ -66,7 +66,7 @@ async function extractFile(file) {
       if (!jr.ok) throw new Error(`Lost the job (HTTP ${jr.status}).`);
       const job = await jr.json();
       if (job.status === "done") {
-        window.enterReview(currentFile, job.result);
+        window.enterReview(currentFile, job.result, job.job_id);
         return;
       }
       if (job.status === "error") {

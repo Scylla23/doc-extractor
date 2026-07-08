@@ -20,14 +20,53 @@ const ASSIGNABLE = [
 ];
 
 let pendingSel = null; // { text, page }
+let jobId = null;
 
-async function enterReview(file, extracted) {
+async function enterReview(file, extracted, id) {
   record = structuredClone(extracted || {});
+  jobId = id;
   body.dataset.state = "review";
   document.getElementById("review").hidden = false;
   renderLedger();
   initSelection();
+  wireReviewButtons();
   await renderPdf(file);
+}
+
+function wireReviewButtons() {
+  const status = document.getElementById("reviewStatus");
+
+  document.getElementById("saveBtn").onclick = async () => {
+    status.textContent = "Saving…";
+    try {
+      const res = await fetch(`${window.API_BASE}/jobs/${jobId}/result`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(record),
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      status.textContent = "Saved ✓";
+    } catch (err) {
+      status.textContent = "Save failed — your edits are kept; try again or download.";
+    }
+  };
+
+  document.getElementById("downloadBtn").onclick = () => {
+    const blob = new Blob([JSON.stringify(record, null, 2)], { type: "application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `invoice-${jobId || "record"}.json`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  };
+
+  document.getElementById("newFileBtn").onclick = () => {
+    document.getElementById("review").hidden = true;
+    pdfPane.innerHTML = "";
+    dataPane.innerHTML = "";
+    document.getElementById("selPopover").hidden = true;
+    body.dataset.state = "idle";
+  };
 }
 
 async function renderPdf(file) {
