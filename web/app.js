@@ -26,6 +26,8 @@ function isPdf(file) {
   return file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
 }
 
+let currentFile = null;
+
 function handleFile(file) {
   clearError();
   if (!file) return;
@@ -33,6 +35,7 @@ function handleFile(file) {
     showError(`That's not a PDF. ${file.name} — drop an invoice PDF instead.`);
     return;
   }
+  currentFile = file;
   resultEl.innerHTML = "";
   loadingFile.textContent = file.name;
   setState("loading");
@@ -63,8 +66,7 @@ async function extractFile(file) {
       if (!jr.ok) throw new Error(`Lost the job (HTTP ${jr.status}).`);
       const job = await jr.json();
       if (job.status === "done") {
-        renderResult(job.result);
-        setState("idle"); // dropzone ready for another; result shows below
+        window.enterReview(currentFile, job.result);
         return;
       }
       if (job.status === "error") {
@@ -133,11 +135,11 @@ function group(title, rows) {
   return frag;
 }
 
-function renderResult(inv) {
-  resultEl.innerHTML = "";
+function buildLedger(inv) {
   inv = inv || {};
+  const frag = document.createDocumentFragment();
 
-  resultEl.append(
+  frag.append(
     group("Invoice", [
       fieldRow("Vendor", inv.vendor_name),
       fieldRow("Invoice №", inv.invoice_number),
@@ -152,30 +154,24 @@ function renderResult(inv) {
       const desc = val(it.description);
       const qty = it.quantity && it.quantity.value != null ? `${val(it.quantity)} × ` : "";
       const unit = it.unit_price && it.unit_price.value != null ? ` @ ${money(it.unit_price)}` : "";
-      // The row's value reads as a line; the meter/cite track the amount field.
       return fieldRow(`Item ${i + 1}`, it.amount, `${qty}${desc}${unit} = ${money(it.amount)}`);
     });
-    resultEl.append(group(`Line items (${items.length})`, rows));
+    frag.append(group(`Line items (${items.length})`, rows));
   }
 
-  resultEl.append(
+  frag.append(
     group("Totals", [
       fieldRow("Subtotal", inv.subtotal, money(inv.subtotal)),
       fieldRow("Tax", inv.tax, money(inv.tax)),
       fieldRow("Total", inv.total, money(inv.total)),
     ])
   );
-
-  // Proof it's real schema-valid JSON, for the dev audience.
-  const details = document.createElement("details");
-  details.className = "raw-json";
-  const summary = document.createElement("summary");
-  summary.textContent = "Raw JSON";
-  const pre = document.createElement("pre");
-  pre.textContent = JSON.stringify(inv, null, 2);
-  details.append(summary, pre);
-  resultEl.append(details);
+  return frag;
 }
+
+// Expose for review.js (loaded as a module).
+window.buildLedger = buildLedger;
+window.ledgerHelpers = { money, val, fieldRow, group };
 
 // --- wiring ---
 fileInput.addEventListener("change", () => handleFile(fileInput.files[0]));
