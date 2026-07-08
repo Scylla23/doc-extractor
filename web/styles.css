@@ -233,7 +233,20 @@ body[data-state="loading"] .dropzone { cursor: default; }
   border-left: 2px solid var(--accent-tint);
   padding-left: 0.6rem;
 }
-.field-cite[data-page] { cursor: pointer; text-align: left; width: 100%; }
+.field-cite[data-page] {
+  appearance: none;
+  background: none;
+  border: none;
+  border-left: 2px solid var(--accent-tint);
+  padding: 0 0 0 0.6rem;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+}
 .field-cite[data-page]:hover { color: var(--accent); border-left-color: var(--accent); }
 
 .raw-json {

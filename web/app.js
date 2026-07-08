@@ -120,9 +120,9 @@ function fieldRow(label, field, valueText) {
   if (field && field.source_quote) {
     const c = document.createElement(field.page != null ? "button" : "span");
     c.className = "field-cite";
-    c.type = "button";
     c.textContent = `"${field.source_quote}"${field.page != null ? ` ·p${field.page}` : ""}`;
     if (field.page != null) {
+      c.type = "button";
       c.dataset.page = String(field.page);
       c.title = "Jump to this page";
     }
