@@ -92,7 +92,7 @@ const money = (f) =>
 
 const val = (f) => (f && f.value != null && f.value !== "" ? String(f.value) : "—");
 
-function fieldRow(label, field, valueText) {
+function fieldRow(label, field, valueText, path) {
   const row = document.createElement("div");
   row.className = "field-row";
   const has = field && field.value != null && field.value !== "";
@@ -105,10 +105,16 @@ function fieldRow(label, field, valueText) {
   const v = document.createElement("span");
   v.className = "field-value";
   v.textContent = valueText != null ? valueText : val(field);
+  if (path) { v.dataset.path = path; v.tabIndex = 0; v.classList.add("editable"); }
 
   row.append(l, v);
 
-  if (has) {
+  if (field && field.manual) {
+    const pill = document.createElement("span");
+    pill.className = "field-manual";
+    pill.textContent = "manual";
+    row.append(pill);
+  } else if (has) {
     const m = document.createElement("span");
     m.className = "field-meter";
     const pct = Math.round(((field.confidence ?? 0) * 100));
@@ -146,10 +152,10 @@ function buildLedger(inv) {
 
   frag.append(
     group("Invoice", [
-      fieldRow("Vendor", inv.vendor_name),
-      fieldRow("Invoice №", inv.invoice_number),
-      fieldRow("Date", inv.invoice_date),
-      fieldRow("Currency", inv.currency),
+      fieldRow("Vendor", inv.vendor_name, undefined, "vendor_name"),
+      fieldRow("Invoice №", inv.invoice_number, undefined, "invoice_number"),
+      fieldRow("Date", inv.invoice_date, undefined, "invoice_date"),
+      fieldRow("Currency", inv.currency, undefined, "currency"),
     ])
   );
 
@@ -159,16 +165,16 @@ function buildLedger(inv) {
       const desc = val(it.description);
       const qty = it.quantity && it.quantity.value != null ? `${val(it.quantity)} × ` : "";
       const unit = it.unit_price && it.unit_price.value != null ? ` @ ${money(it.unit_price)}` : "";
-      return fieldRow(`Item ${i + 1}`, it.amount, `${qty}${desc}${unit} = ${money(it.amount)}`);
+      return fieldRow(`Item ${i + 1}`, it.amount, `${qty}${desc}${unit} = ${money(it.amount)}`, `line_items.${i}.amount`);
     });
     frag.append(group(`Line items (${items.length})`, rows));
   }
 
   frag.append(
     group("Totals", [
-      fieldRow("Subtotal", inv.subtotal, money(inv.subtotal)),
-      fieldRow("Tax", inv.tax, money(inv.tax)),
-      fieldRow("Total", inv.total, money(inv.total)),
+      fieldRow("Subtotal", inv.subtotal, money(inv.subtotal), "subtotal"),
+      fieldRow("Tax", inv.tax, money(inv.tax), "tax"),
+      fieldRow("Total", inv.total, money(inv.total), "total"),
     ])
   );
   return frag;

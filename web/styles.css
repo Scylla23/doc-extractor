@@ -203,6 +203,27 @@ body[data-state="loading"] .dropzone { cursor: default; }
   color: var(--ink-soft);
 }
 .field-value { font-family: var(--mono); font-size: 0.98rem; }
+.field-value.editable { cursor: text; border-bottom: 1px dashed transparent; }
+.field-value.editable:hover { border-bottom-color: var(--accent); }
+.field-edit {
+  font-family: var(--mono);
+  font-size: 0.98rem;
+  padding: 0.1rem 0.3rem;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  width: 100%;
+}
+.field-manual {
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-tint);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  align-self: center;
+}
 .field-meter {
   --pct: 0%;
   position: relative;

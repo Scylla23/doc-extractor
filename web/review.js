@@ -4,6 +4,7 @@
 import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.76/pdf.min.mjs";
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.76/pdf.worker.min.mjs";
+import { coerce } from "./coerce.mjs";
 
 const body = document.body;
 const pdfPane = document.getElementById("pdfPane");
@@ -73,10 +74,61 @@ function wireCitations() {
   });
 }
 
+function setPath(obj, path, value) {
+  const keys = path.split(".");
+  let node = obj;
+  for (let i = 0; i < keys.length - 1; i++) {
+    const k = keys[i];
+    if (node[k] == null) node[k] = /^\d+$/.test(keys[i + 1]) ? [] : {};
+    node = node[k];
+  }
+  node[keys[keys.length - 1]] = value;
+}
+
+function getPath(obj, path) {
+  return path.split(".").reduce((n, k) => (n == null ? n : n[k]), obj);
+}
+
+function setFieldManual(path, text, extra = {}) {
+  const prev = getPath(record, path) || {};
+  setPath(record, path, {
+    ...prev,
+    value: coerce(text),
+    manual: true,
+    review_required: false,
+    ...extra,
+  });
+}
+
+function wireEditing() {
+  dataPane.querySelectorAll(".field-value.editable").forEach((v) => {
+    v.addEventListener("click", () => beginEdit(v));
+  });
+}
+
+function beginEdit(node) {
+  const path = node.dataset.path;
+  const input = document.createElement("input");
+  input.className = "field-edit";
+  input.value = node.textContent === "—" ? "" : node.textContent;
+  node.replaceWith(input);
+  input.focus();
+  const commit = () => {
+    setFieldManual(path, input.value);
+    renderLedger(); // re-render so meter→manual pill updates
+  };
+  input.addEventListener("blur", commit, { once: true });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") input.blur();
+    if (e.key === "Escape") { input.removeEventListener("blur", commit); renderLedger(); }
+  });
+}
+
 function renderLedger() {
   dataPane.innerHTML = "";
   dataPane.append(window.buildLedger(record));
   wireCitations();
+  wireEditing();
 }
 
 window.enterReview = enterReview;
