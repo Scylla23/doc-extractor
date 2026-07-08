@@ -197,7 +197,10 @@ function beginEdit(node) {
   const path = node.dataset.path;
   const input = document.createElement("input");
   input.className = "field-edit";
-  input.value = node.textContent === "—" ? "" : node.textContent;
+  // Seed from the record's raw value, not the DOM text: line-item rows display a
+  // composed string ("2 × Widget @ 10.00 = 20.00"), which must not be fed to coerce().
+  const cur = getPath(record, path);
+  input.value = cur && cur.value != null ? String(cur.value) : "";
   node.replaceWith(input);
   input.focus();
   const commit = () => {
