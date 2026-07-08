@@ -12,11 +12,20 @@ const dataPane = document.getElementById("dataPane");
 
 let record = null; // the working (correctable) record
 
+const ASSIGNABLE = [
+  ["Vendor", "vendor_name"], ["Invoice №", "invoice_number"],
+  ["Date", "invoice_date"], ["Currency", "currency"],
+  ["Subtotal", "subtotal"], ["Tax", "tax"], ["Total", "total"],
+];
+
+let pendingSel = null; // { text, page }
+
 async function enterReview(file, extracted) {
   record = structuredClone(extracted || {});
   body.dataset.state = "review";
   document.getElementById("review").hidden = false;
   renderLedger();
+  initSelection();
   await renderPdf(file);
 }
 
@@ -97,6 +106,52 @@ function setFieldManual(path, text, extra = {}) {
     manual: true,
     review_required: false,
     ...extra,
+  });
+}
+
+function currentSelection() {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return null;
+  const text = sel.toString().trim();
+  if (!text) return null;
+  let node = sel.anchorNode;
+  while (node && !(node.dataset && node.dataset.page)) node = node.parentElement;
+  if (!node) return null; // selection not inside the PDF pane
+  return { text, page: Number(node.dataset.page) };
+}
+
+function initSelection() {
+  const pop = document.getElementById("selPopover");
+  const fieldSel = document.getElementById("selField");
+  fieldSel.innerHTML =
+    '<option value="">—</option>' +
+    ASSIGNABLE.map(([label, path]) => `<option value="${path}">${label}</option>`).join("");
+
+  pdfPane.addEventListener("mouseup", () => {
+    const s = currentSelection();
+    if (!s) { pop.hidden = true; return; }
+    pendingSel = s;
+    document.getElementById("selNewKey").value = "";
+    fieldSel.value = "";
+    pop.hidden = false;
+  });
+
+  document.getElementById("selCancel").addEventListener("click", () => { pop.hidden = true; });
+
+  document.getElementById("selApply").addEventListener("click", () => {
+    if (!pendingSel) return;
+    const path = fieldSel.value;
+    const newKey = document.getElementById("selNewKey").value.trim();
+    const extra = { page: pendingSel.page, source_quote: pendingSel.text };
+    if (newKey) {
+      setFieldManual(`custom_fields.${newKey}`, pendingSel.text, extra);
+    } else if (path) {
+      setFieldManual(path, pendingSel.text, extra);
+    } else {
+      return; // nothing chosen
+    }
+    pop.hidden = true;
+    renderLedger();
   });
 }
 

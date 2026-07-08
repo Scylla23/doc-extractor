@@ -78,6 +78,20 @@
           <div class="pdf-pane" id="pdfPane"></div>
           <div class="data-pane" id="dataPane"></div>
         </div>
+        <div class="sel-popover" id="selPopover" hidden>
+          <label class="sel-row">
+            Set value of
+            <select id="selField"></select>
+          </label>
+          <label class="sel-row">
+            or add field
+            <input id="selNewKey" type="text" placeholder="e.g. po_number" />
+          </label>
+          <div class="sel-actions">
+            <button type="button" class="btn" id="selApply">Apply</button>
+            <button type="button" class="btn" id="selCancel">Cancel</button>
+          </div>
+        </div>
       </section>
     </main>
 

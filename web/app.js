@@ -177,6 +177,16 @@ function buildLedger(inv) {
       fieldRow("Total", inv.total, money(inv.total), "total"),
     ])
   );
+
+  const custom = inv.custom_fields || {};
+  const keys = Object.keys(custom);
+  if (keys.length) {
+    const rows = keys.map((k) =>
+      fieldRow(k, custom[k], undefined, `custom_fields.${k}`)
+    );
+    frag.append(group(`Custom fields (${keys.length})`, rows));
+  }
+
   return frag;
 }
 

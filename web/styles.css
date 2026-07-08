@@ -374,3 +374,27 @@ body[data-state="review"] #result { display: none; }
 @media (max-width: 780px) {
   .review-split { grid-template-columns: 1fr; }
 }
+
+/* ---- Select-to-field popover ---- */
+.sel-popover {
+  position: fixed;
+  right: 2rem;
+  bottom: 2rem;
+  z-index: 20;
+  background: var(--panel);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.6rem;
+  width: 260px;
+}
+.sel-row { display: grid; gap: 0.25rem; font-size: 0.8rem; color: var(--ink-soft); }
+.sel-row select, .sel-row input {
+  font-family: var(--mono);
+  padding: 0.3rem;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+.sel-actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
