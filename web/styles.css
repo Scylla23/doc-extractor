@@ -390,6 +390,7 @@ body[data-state="review"] #result { display: none; }
   gap: 0.6rem;
   width: 260px;
 }
+.sel-popover[hidden] { display: none; }
 .sel-row { display: grid; gap: 0.25rem; font-size: 0.8rem; color: var(--ink-soft); }
 .sel-row select, .sel-row input {
   font-family: var(--mono);

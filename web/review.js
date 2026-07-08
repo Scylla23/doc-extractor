@@ -5,6 +5,7 @@ import * as pdfjsLib from "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.76/
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.7.76/pdf.worker.min.mjs";
 import { coerce } from "./coerce.mjs";
+import { setPath, getPath } from "./paths.mjs";
 
 const body = document.body;
 const pdfPane = document.getElementById("pdfPane");
@@ -83,21 +84,6 @@ function wireCitations() {
   });
 }
 
-function setPath(obj, path, value) {
-  const keys = path.split(".");
-  let node = obj;
-  for (let i = 0; i < keys.length - 1; i++) {
-    const k = keys[i];
-    if (node[k] == null) node[k] = /^\d+$/.test(keys[i + 1]) ? [] : {};
-    node = node[k];
-  }
-  node[keys[keys.length - 1]] = value;
-}
-
-function getPath(obj, path) {
-  return path.split(".").reduce((n, k) => (n == null ? n : n[k]), obj);
-}
-
 function setFieldManual(path, text, extra = {}) {
   const prev = getPath(record, path) || {};
   setPath(record, path, {
@@ -120,7 +106,11 @@ function currentSelection() {
   return { text, page: Number(node.dataset.page) };
 }
 
+let selInitialized = false;
+
 function initSelection() {
+  if (selInitialized) return;
+  selInitialized = true;
   const pop = document.getElementById("selPopover");
   const fieldSel = document.getElementById("selField");
   fieldSel.innerHTML =
@@ -141,7 +131,8 @@ function initSelection() {
   document.getElementById("selApply").addEventListener("click", () => {
     if (!pendingSel) return;
     const path = fieldSel.value;
-    const newKey = document.getElementById("selNewKey").value.trim();
+    const rawKey = document.getElementById("selNewKey").value.trim();
+    const newKey = rawKey ? rawKey.replace(/[^A-Za-z0-9_-]/g, "_") : "";
     const extra = { page: pendingSel.page, source_quote: pendingSel.text };
     if (newKey) {
       setFieldManual(`custom_fields.${newKey}`, pendingSel.text, extra);
@@ -151,6 +142,7 @@ function initSelection() {
       return; // nothing chosen
     }
     pop.hidden = true;
+    window.getSelection().removeAllRanges();
     renderLedger();
   });
 }
