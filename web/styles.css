@@ -233,6 +233,8 @@ body[data-state="loading"] .dropzone { cursor: default; }
   border-left: 2px solid var(--accent-tint);
   padding-left: 0.6rem;
 }
+.field-cite[data-page] { cursor: pointer; text-align: left; width: 100%; }
+.field-cite[data-page]:hover { color: var(--accent); border-left-color: var(--accent); }
 
 .raw-json {
   margin-top: 1.5rem;
@@ -326,6 +328,14 @@ body[data-state="review"] #result { display: none; }
 .pdf-page canvas { display: block; }
 .pdf-error { color: var(--warn); font-family: var(--mono); font-size: 0.85rem; }
 .data-pane { max-height: 80vh; overflow: auto; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .pdf-page.flash { animation: page-flash 1.1s ease-out; }
+}
+@keyframes page-flash {
+  0%   { box-shadow: 0 0 0 3px var(--accent), 0 1px 4px rgba(0,0,0,0.15); }
+  100% { box-shadow: 0 0 0 0 transparent, 0 1px 4px rgba(0,0,0,0.15); }
+}
 
 @media (max-width: 780px) {
   .review-split { grid-template-columns: 1fr; }

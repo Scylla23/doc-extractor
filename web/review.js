@@ -58,9 +58,25 @@ async function renderPdf(file) {
   }
 }
 
+function flashPage(n) {
+  const el = pdfPane.querySelector(`.pdf-page[data-page="${n}"]`);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+  el.classList.remove("flash");
+  void el.offsetWidth; // restart the animation
+  el.classList.add("flash");
+}
+
+function wireCitations() {
+  dataPane.querySelectorAll(".field-cite[data-page]").forEach((btn) => {
+    btn.addEventListener("click", () => flashPage(btn.dataset.page));
+  });
+}
+
 function renderLedger() {
   dataPane.innerHTML = "";
   dataPane.append(window.buildLedger(record));
+  wireCitations();
 }
 
 window.enterReview = enterReview;
