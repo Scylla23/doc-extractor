@@ -75,9 +75,15 @@ async function renderPdf(file) {
   try {
     const buf = await file.arrayBuffer();
     const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+    // Fit each page to the pane width so it isn't clipped on the sides.
+    // ponytail: measured once at render; no resize re-render (reload if resized).
+    const avail = (pdfPane.clientWidth || 600) - 32; // minus 1rem padding each side
+    const dpr = window.devicePixelRatio || 1;
     for (let n = 1; n <= pdf.numPages; n++) {
       const page = await pdf.getPage(n);
-      const viewport = page.getViewport({ scale: 1.4 });
+      const base = page.getViewport({ scale: 1 });
+      const scale = avail / base.width;
+      const viewport = page.getViewport({ scale });
 
       const wrap = document.createElement("div");
       wrap.className = "pdf-page";
@@ -86,8 +92,10 @@ async function renderPdf(file) {
       wrap.style.height = `${viewport.height}px`;
 
       const canvas = document.createElement("canvas");
-      canvas.width = viewport.width;
-      canvas.height = viewport.height;
+      canvas.width = Math.floor(viewport.width * dpr);
+      canvas.height = Math.floor(viewport.height * dpr);
+      canvas.style.width = `${viewport.width}px`;
+      canvas.style.height = `${viewport.height}px`;
       wrap.append(canvas);
 
       // Text layer: positioned spans so browser selection works over the page.
@@ -96,7 +104,11 @@ async function renderPdf(file) {
       wrap.append(textLayer);
 
       pdfPane.append(wrap);
-      await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+      await page.render({
+        canvasContext: canvas.getContext("2d"),
+        viewport,
+        transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null, // crisp on HiDPI
+      }).promise;
 
       // Text layer: v4 TextLayer class (confirmed current API via context7).
       const textContent = await page.getTextContent();
@@ -118,9 +130,46 @@ function flashPage(n) {
   el.classList.add("flash");
 }
 
+const normText = (s) => s.replace(/\s+/g, " ").trim().toLowerCase();
+
+// Highlight the cited quote's text spans on the given page. Returns true on a hit.
+function highlightQuote(pageNum, quote) {
+  pdfPane.querySelectorAll(".textLayer .cite-hl").forEach((s) => s.classList.remove("cite-hl"));
+  const pageEl = pdfPane.querySelector(`.pdf-page[data-page="${pageNum}"]`);
+  const q = normText(quote || "");
+  if (!pageEl || !q) return false;
+
+  // Concatenate the page's text spans, tracking each span's char range, then find
+  // where the quote lands and light up every span that overlaps it.
+  const spans = [...pageEl.querySelectorAll(".textLayer span")].filter((s) => normText(s.textContent));
+  let concat = "";
+  const ranges = spans.map((sp) => {
+    const start = concat.length;
+    concat += normText(sp.textContent) + " ";
+    return { sp, start, end: concat.length };
+  });
+
+  const idx = concat.indexOf(q);
+  let hits;
+  if (idx >= 0) {
+    const end = idx + q.length;
+    hits = ranges.filter((r) => r.start < end && r.end > idx).map((r) => r.sp);
+  } else {
+    // Quote not found verbatim (OCR/whitespace drift): light up spans it contains.
+    hits = ranges.filter((r) => q.includes(normText(r.sp.textContent))).map((r) => r.sp);
+  }
+  if (!hits.length) return false;
+  hits.forEach((sp) => sp.classList.add("cite-hl"));
+  hits[0].scrollIntoView({ behavior: "smooth", block: "center" });
+  return true;
+}
+
 function wireCitations() {
   dataPane.querySelectorAll(".field-cite[data-page]").forEach((btn) => {
-    btn.addEventListener("click", () => flashPage(btn.dataset.page));
+    btn.addEventListener("click", () => {
+      const page = Number(btn.dataset.page);
+      if (!highlightQuote(page, btn.dataset.quote)) flashPage(page);
+    });
   });
 }
 

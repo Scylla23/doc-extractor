@@ -115,12 +115,12 @@ function fieldRow(label, field, valueText, path) {
     pill.textContent = "manual";
     row.append(pill);
   } else if (has) {
-    const m = document.createElement("span");
-    m.className = "field-meter";
+    const c = document.createElement("span");
+    c.className = "field-conf";
     const pct = Math.round(((field.confidence ?? 0) * 100));
-    m.style.setProperty("--pct", `${pct}%`);
-    m.title = `confidence ${pct}%${field.review_required ? " · review" : ""}`;
-    row.append(m);
+    c.textContent = `${pct}%`;
+    c.title = `confidence ${pct}%${field.review_required ? " · review" : ""}`;
+    row.append(c);
   }
 
   if (field && field.source_quote) {
@@ -130,7 +130,8 @@ function fieldRow(label, field, valueText, path) {
     if (field.page != null) {
       c.type = "button";
       c.dataset.page = String(field.page);
-      c.title = "Jump to this page";
+      c.dataset.quote = field.source_quote;
+      c.title = "Find this on the page";
     }
     row.append(c);
   }

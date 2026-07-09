@@ -224,24 +224,16 @@ body[data-state="loading"] .dropzone { cursor: default; }
   border-radius: 3px;
   align-self: center;
 }
-.field-meter {
-  --pct: 0%;
-  position: relative;
-  width: 92px;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--rule);
+.field-conf {
   align-self: center;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ok);
+  min-width: 3ch;
+  text-align: right;
 }
-.field-meter::after {
-  content: "";
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--pct);
-  border-radius: 3px;
-  background: var(--ok);
-}
-.field-row[data-review="true"] .field-meter::after { background: var(--warn); }
+.field-row[data-review="true"] .field-conf { color: var(--warn); }
 .field-row[data-review="true"] .field-label::before {
   content: "✎ ";
   color: var(--warn);
@@ -358,8 +350,13 @@ body[data-state="review"] #result { display: none; }
   align-items: center;
   gap: 1rem;
 }
-.pdf-page { position: relative; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
+.pdf-page { position: relative; max-width: 100%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.15); }
 .pdf-page canvas { display: block; }
+/* Cited-quote highlight: a marker box over the (transparent) text-layer span. */
+.textLayer .cite-hl {
+  background: rgba(43, 46, 107, 0.28);
+  border-radius: 2px;
+}
 .pdf-error { color: var(--warn); font-family: var(--mono); font-size: 0.85rem; }
 .data-pane { max-height: 80vh; overflow: auto; }
 
