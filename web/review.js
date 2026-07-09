@@ -225,22 +225,45 @@ function currentSelection() {
 
 let selInitialized = false;
 
+// Rebuild the field dropdown each time the popover opens, so custom fields the
+// user already added (e.g. "Email") show up as re-assignable targets.
+function populateFieldSelect(fieldSel) {
+  const custom = record && record.custom_fields ? Object.keys(record.custom_fields) : [];
+  fieldSel.innerHTML =
+    '<option value="">—</option>' +
+    ASSIGNABLE.map(([label, path]) => `<option value="${path}">${label}</option>`).join("") +
+    custom.map((k) => `<option value="custom_fields.${k}">${k}</option>`).join("");
+}
+
+// Place the popover just below the selected text, clamped to the viewport.
+function positionPopover(pop) {
+  const sel = window.getSelection();
+  if (!sel || !sel.rangeCount) return;
+  const r = sel.getRangeAt(0).getBoundingClientRect();
+  const w = pop.offsetWidth || 260;
+  const h = pop.offsetHeight || 160;
+  let left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8));
+  let top = r.bottom + 6;
+  if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6); // flip above if no room
+  pop.style.left = `${left}px`;
+  pop.style.top = `${top}px`;
+}
+
 function initSelection() {
   if (selInitialized) return;
   selInitialized = true;
   const pop = document.getElementById("selPopover");
   const fieldSel = document.getElementById("selField");
-  fieldSel.innerHTML =
-    '<option value="">—</option>' +
-    ASSIGNABLE.map(([label, path]) => `<option value="${path}">${label}</option>`).join("");
 
   pdfPane.addEventListener("mouseup", () => {
     const s = currentSelection();
     if (!s) { pop.hidden = true; return; }
     pendingSel = s;
+    populateFieldSelect(fieldSel);
     document.getElementById("selNewKey").value = "";
     fieldSel.value = "";
-    pop.hidden = false;
+    pop.hidden = false;     // unhide first so offsetWidth/Height are measurable
+    positionPopover(pop);
   });
 
   document.getElementById("selCancel").addEventListener("click", () => { pop.hidden = true; });

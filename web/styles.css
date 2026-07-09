@@ -375,8 +375,8 @@ body[data-state="review"] #result { display: none; }
 /* ---- Select-to-field popover ---- */
 .sel-popover {
   position: fixed;
-  right: 2rem;
-  bottom: 2rem;
+  left: 0;
+  top: 0;
   z-index: 20;
   background: var(--panel);
   border: 1px solid var(--accent);
