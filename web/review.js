@@ -52,14 +52,20 @@ function wireReviewButtons() {
     }
   };
 
-  document.getElementById("downloadBtn").onclick = () => {
-    const blob = new Blob([JSON.stringify(record, null, 2)], { type: "application/json" });
+  const download = (data, type, ext) => {
+    const blob = new Blob([data], { type });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = `invoice-${jobId || "record"}.json`;
+    a.download = `invoice-${jobId || "record"}.${ext}`;
     a.click();
     URL.revokeObjectURL(a.href);
   };
+
+  document.getElementById("downloadBtn").onclick = () =>
+    download(JSON.stringify(record, null, 2), "application/json", "json");
+
+  document.getElementById("downloadCsvBtn").onclick = () =>
+    download(toCSV(record), "text/csv", "csv");
 
   document.getElementById("newFileBtn").onclick = () => {
     document.getElementById("review").hidden = true;
@@ -68,6 +74,28 @@ function wireReviewButtons() {
     document.getElementById("selPopover").hidden = true;
     body.dataset.state = "idle";
   };
+}
+
+// Flatten the record to a field-per-row CSV: field, value, confidence, page, quote.
+function toCSV(rec) {
+  rec = rec || {};
+  const esc = (v) => {
+    const s = v == null ? "" : String(v);
+    return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+  };
+  const rows = [["field", "value", "confidence", "page", "source_quote"]];
+  const push = (name, f) => {
+    if (!f) return;
+    const conf = f.manual ? "manual" : f.confidence != null ? `${Math.round(f.confidence * 100)}%` : "";
+    rows.push([name, f.value, conf, f.page, f.source_quote]);
+  };
+  ["vendor_name", "invoice_number", "invoice_date", "currency", "subtotal", "tax", "total"]
+    .forEach((k) => push(k, rec[k]));
+  (rec.line_items || []).forEach((it, i) =>
+    ["description", "quantity", "unit_price", "amount"].forEach((sub) => push(`line_item[${i}].${sub}`, it[sub]))
+  );
+  Object.entries(rec.custom_fields || {}).forEach(([k, f]) => push(`custom.${k}`, f));
+  return rows.map((r) => r.map(esc).join(",")).join("\r\n");
 }
 
 async function renderPdf(file) {
